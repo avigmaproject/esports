@@ -1,4 +1,4 @@
-package com.vrmasterleague;
+package com.avigma.vrmasterleague;
 
 import com.facebook.react.ReactActivity;
 
