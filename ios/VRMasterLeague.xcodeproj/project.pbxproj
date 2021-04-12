@@ -145,7 +145,6 @@
 				32FA20A426DEACB36AD11471 /* Pods-VRMasterLeague-VRMasterLeagueTests.debug.xcconfig */,
 				D7B5AB6D0EE250D2C57243A9 /* Pods-VRMasterLeague-VRMasterLeagueTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -496,7 +495,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.avigma.VRMasterLeague;
 				PRODUCT_NAME = VRMasterLeague;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -521,7 +520,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.avigma.VRMasterLeague;
 				PRODUCT_NAME = VRMasterLeague;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
