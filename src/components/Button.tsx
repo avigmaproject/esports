@@ -5,14 +5,22 @@ import { theme } from "../core/theme";
 
 type Props = React.ComponentProps<typeof PaperButton>;
 
-const Button = ({ mode, style, labelStyle, children, ...props }: Props) => (
+const Button = ({
+  mode,
+  style,
+  labelStyle,
+  disabled,
+  children,
+  ...props
+}: Props) => (
   <PaperButton
     style={[
       styles.button,
       mode === "outlined" && { backgroundColor: theme.colors.surface },
+      disabled && { backgroundColor: "#dedede" },
       style,
     ]}
-    labelStyle={[styles.text, labelStyle]}
+    labelStyle={[styles.text, labelStyle, disabled && { color: "#000" }]}
     mode={mode}
     {...props}>
     {children}
@@ -23,11 +31,11 @@ const styles = StyleSheet.create({
   button: {
     width: "100%",
     marginVertical: 10,
-    height: 50,
+    height: 45,
   },
   text: {
-    fontSize: 18,
-    lineHeight: 30,
+    fontSize: 17,
+    lineHeight: 28,
   },
 });
 

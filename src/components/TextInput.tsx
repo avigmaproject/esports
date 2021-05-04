@@ -1,30 +1,38 @@
 import React, { memo, ReactNode } from "react";
-import { View, StyleSheet, TextInput as NativeTextInput } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TextInput as NativeTextInput,
+  ViewStyle,
+} from "react-native";
 import { HelperText, TextInput as Input } from "react-native-paper";
 import { theme } from "../core/theme";
 
-type Props = React.ComponentProps<typeof Input> & {
+type Props = React.ComponentProps<typeof NativeTextInput> & {
   errorText?: string;
   inputStyle?: object;
   right?: ReactNode;
   left?: ReactNode;
+  error?: boolean;
+  containerStyle?: ViewStyle;
 };
 
-const TextInput = ({ errorText, inputStyle, ...props }: Props) => (
-  <View style={styles.container}>
-    {/* <Input
-      style={[styles.input, inputStyle]}
-      selectionColor={theme.colors.background}
-      underlineColor="red"
-      mode="outlined"
-      {...props}
-    /> */}
+const TextInput = ({
+  errorText,
+  inputStyle,
+  containerStyle,
+  right,
+  left,
+  ...props
+}: Props) => (
+  <View style={[styles.container, containerStyle]}>
     <NativeTextInput
       style={[styles.input, inputStyle]}
       selectionColor={theme.colors.primary}
-      underlineColor="red"
       {...props}
     />
+    {left}
+    {right}
     {errorText ? (
       <HelperText type="error" style={styles.error}>
         {errorText}
@@ -40,7 +48,7 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: theme.colors.surface,
-    height: 50,
+    height: 45,
     borderBottomWidth: 2,
     borderBottomColor: "#ffffff",
     color: theme.colors.text,
@@ -49,7 +57,7 @@ const styles = StyleSheet.create({
   error: {
     fontSize: 14,
     color: theme.colors.error,
-    paddingHorizontal: 4,
+    paddingHorizontal: 0,
     paddingTop: 4,
   },
 });

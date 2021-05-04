@@ -6,7 +6,10 @@ import axios from "axios";
 import { Block } from "../../../components";
 import { RootState } from "../../../store";
 import { AuthState } from "../../auth";
-import { setAppReady } from "../actions";
+import { setAppReady, setSnackbarMessage } from "../actions";
+import { User } from "../../auth/models";
+import { meDetails } from "../../auth/services/auth";
+import { clearStore, loginUser, setMeDetails } from "../../auth/actions";
 
 const SplashScreen = () => {
   const dispatch = useDispatch();
@@ -18,28 +21,29 @@ const SplashScreen = () => {
     let source = axios.CancelToken.source();
     const checkUser = async () => {
       try {
-        // if (token) {
-        //   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        //   const data = await dispatch(me(source.token));
-        //   if (data) {
-        //     await dispatch(setToken(token));
-        //     await dispatch(setUser(data));
-        //     await dispatch(setAppReady());
-        //   } else {
-        //     // console.log(`user not found`);
-        //     await dispatch(clearStore());
-        //     await dispatch(setAppReady());
-        //   }
-        // } else {
-        //   // console.log(`token not found`);
-        //   // await dispatch(clearStore());
-        //   await dispatch(setAppReady());
-        // }
-        dispatch(setAppReady());
+        if (token) {
+          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          const user: User = await meDetails(source.token);
+
+          if (user) {
+            dispatch(loginUser(token));
+            dispatch(setMeDetails(user));
+            await dispatch(setAppReady());
+          } else {
+            // console.log(`user not found`);
+            await dispatch(clearStore());
+            await dispatch(setAppReady());
+          }
+        } else {
+          // console.log(`token not found`);
+          // await dispatch(clearStore());
+          await dispatch(setAppReady());
+        }
       } catch (error) {
-        // console.log(error);
-        // await dispatch(clearStore());
-        // await dispatch(setAppReady());
+        console.log(error);
+        await dispatch(clearStore());
+        await dispatch(setAppReady());
+        dispatch(setSnackbarMessage("Invalid session. Please login again."));
       }
     };
     checkUser();

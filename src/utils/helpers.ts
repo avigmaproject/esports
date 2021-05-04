@@ -1,7 +1,8 @@
 import axios from "axios";
+import dayjs from "dayjs";
 
 // Project imports
-import { BASE_URL } from "../config";
+import { API_BASE_URL, BASE_URL } from "../config";
 
 /**
  * Generate stylesheets for margin or padding
@@ -329,13 +330,15 @@ export const mergeTheme = (theme: any = {}, extra: any = {}) => {
 
 export const api = () => {
   const instance = axios.create({
-    baseURL: BASE_URL,
+    baseURL: API_BASE_URL,
     withCredentials: false,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
   });
+
+  instance.interceptors.response.use(response => response.data);
 
   return instance;
 };
@@ -350,3 +353,16 @@ export function createAction(type: string, payload: any) {
     payload,
   };
 }
+
+export const resolveImage = (url: string) => `${BASE_URL}${url}`;
+
+export const formatDate = (
+  date: Date | string | undefined | null,
+  format: string,
+) => {
+  if (date) {
+    return dayjs(date).format(format);
+  } else {
+    return dayjs().format(format);
+  }
+};

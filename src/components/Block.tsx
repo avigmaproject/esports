@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet, View, SafeAreaView } from "react-native";
+// import { SafeAreaView } from "react-native-safe-area-context";
 import { spacing, parseSpacing, mergeTheme } from "../utils";
 import * as baseTheme from "../utils/theme";
 
@@ -221,6 +222,7 @@ class Block extends Component<Props> {
       space && { justifyContent: `space-${space}` },
       card && { borderRadius: SIZES.border },
       radius && { borderRadius: radius },
+
       // color shortcuts
       primary && { backgroundColor: COLORS.primary },
       secondary && { backgroundColor: COLORS.secondary },

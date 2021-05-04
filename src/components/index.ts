@@ -6,6 +6,12 @@ import Logo from "./Logo";
 import Paragraph from "./Paragraph";
 import TextInput from "./TextInput";
 import BackButton from "./BackButton";
+import Header from "./Header";
+import TabBar from "./TabBar";
+import PaperSnackbar from "./Snackbar";
+import DrawerContent from "./DrawerContent";
+import TabBarIcon from "./TabBarIcon";
+import Dropdown from "./Dropdown";
 
 export {
   Block,
@@ -16,4 +22,10 @@ export {
   Paragraph,
   TextInput,
   BackButton,
+  Header,
+  TabBar,
+  PaperSnackbar,
+  DrawerContent,
+  TabBarIcon,
+  Dropdown,
 };

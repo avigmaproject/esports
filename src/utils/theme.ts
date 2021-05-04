@@ -1,17 +1,18 @@
 import { Dimensions } from "react-native";
-import { DefaultTheme } from "react-native-paper";
+
+import { theme } from "./../core/theme";
 const window = Dimensions.get("window");
 
 const width = window.width;
 const height = window.height;
 
-const primary = "#259d6d"; // Blue: #3F51B5
-const secondary = "#757575"; // Blue: #757575
-const error = DefaultTheme.colors.error;
+const {
+  colors: { primary, error, secondary },
+} = theme;
 
 export const COLORS = {
   // default font color
-  font: "#000000",
+  font: "#ffffff",
 
   // base colors
   primary: primary,
@@ -70,17 +71,4 @@ export const WEIGHTS = {
   light: "300",
 };
 
-export const paperTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "#ffffff",
-    primary: primary,
-    secondary: secondary,
-    error: error,
-    text: "#212121",
-    accent: "#00BCD4", // Blue: #00BCD4
-  },
-};
-
-export default { COLORS, SIZES, FONTS, WEIGHTS, paperTheme };
+export default { COLORS, SIZES, FONTS, WEIGHTS };

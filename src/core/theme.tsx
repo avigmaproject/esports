@@ -1,14 +1,38 @@
-import { DefaultTheme } from "react-native-paper";
+import { DarkTheme } from "react-native-paper";
+import { DarkTheme as NavigationDarkTheme } from "@react-navigation/native";
+import { DarkTheme as PaperDarkTheme } from "react-native-paper";
+import merge from "deepmerge";
 
-export const theme = {
-  ...DefaultTheme,
+const paperTheme: typeof PaperDarkTheme = {
+  ...PaperDarkTheme,
   roundness: 0,
   colors: {
-    ...DefaultTheme.colors,
+    ...DarkTheme.colors,
     primary: "#ef741c",
-    secondary: "#031b39",
     background: "#01091e",
     error: "#f13a59",
     text: "#ffffff",
+  },
+};
+
+const navigationTheme: typeof NavigationDarkTheme = {
+  ...NavigationDarkTheme,
+  dark: true,
+  colors: {
+    ...NavigationDarkTheme.colors,
+    primary: "#ef741c",
+    background: "#01091e",
+    text: "#ffffff",
+    border: "#ffffff",
+  },
+};
+
+export const CombinedDarkTheme = merge(paperTheme, navigationTheme);
+
+export const theme = {
+  ...CombinedDarkTheme,
+  colors: {
+    ...CombinedDarkTheme.colors,
+    secondary: "#031b39",
   },
 };

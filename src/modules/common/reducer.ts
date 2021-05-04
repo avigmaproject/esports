@@ -1,26 +1,51 @@
 import { RootState } from "../../store";
-import * as t from "./actionTypes";
+import {
+  CommonActionTypes,
+  SET_APP_READY,
+  RESET_APP_READY,
+  SET_SNACKBAR_MESSAGE,
+  CLEAR_SNACKBAR_MESSAGE,
+} from "./actionTypes";
 import { CommonState } from "./models";
 
 export const initialState: CommonState = {
   appReady: false,
+  snackbarVisible: false,
+  snackbarMsg: "",
 };
 
 const reducer = (
   state: CommonState = initialState,
-  action: any,
+  action: CommonActionTypes,
 ): CommonState => {
   switch (action.type) {
-    case t.SET_APP_READY: {
+    case SET_APP_READY: {
       return {
         ...state,
         appReady: true,
       };
     }
-    case t.RESET_APP_READY: {
+    case RESET_APP_READY: {
       return {
         ...state,
         appReady: false,
+      };
+    }
+    case SET_SNACKBAR_MESSAGE: {
+      const {
+        payload: { message },
+      } = action;
+      return {
+        ...state,
+        snackbarVisible: true,
+        snackbarMsg: message,
+      };
+    }
+    case CLEAR_SNACKBAR_MESSAGE: {
+      return {
+        ...state,
+        snackbarVisible: false,
+        snackbarMsg: "",
       };
     }
     default:
