@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
   Platform,
@@ -8,9 +8,23 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Avatar, HelperText, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Avatar,
+  HelperText,
+  IconButton,
+  TouchableRipple,
+  useTheme,
+} from "react-native-paper";
 import DropDownPicker, { ValueType } from "react-native-dropdown-picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import ActionSheet from "@alessiocancian/react-native-actionsheet";
+import {
+  launchCamera,
+  launchImageLibrary,
+  Callback,
+  ImagePickerResponse,
+} from "react-native-image-picker";
 
 import { Block, Button, Text, TextInput, Dropdown } from "../../../components";
 import { Country, IUpdateProfile } from "../models";
@@ -20,7 +34,7 @@ import { RootState } from "../../../store";
 import { resolveImage } from "../../../utils";
 import { theme as coreTheme } from "./../../../core/theme";
 import { mapCountries, mapTimezones } from "../constants";
-import { updateUser } from "../services/profile";
+import { updateLogo, updateUser } from "../services/profile";
 import { setSnackbarMessage } from "../../common/actions";
 import { meDetails } from "../../auth/services/auth";
 import { setMeDetails } from "../../auth/actions";
@@ -43,7 +57,9 @@ const updateSchema = yup.object().shape({
 const UpdateProfile = () => {
   const dispatch = useDispatch();
   const user: User = useSelector((state: RootState) => state.authReducer.user)!;
-  console.log({ user });
+  const token: string = useSelector(
+    (state: RootState) => state.authReducer.token,
+  )!;
 
   const {
     control,
@@ -65,8 +81,9 @@ const UpdateProfile = () => {
   });
 
   const theme = useTheme();
-
+  const profilePicRef = useRef<ActionSheet>(null);
   const [loading, setLoading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [timezones, setTimezone] = useState<{ label: string; value: string }[]>(
     [],
   );
@@ -99,8 +116,7 @@ const UpdateProfile = () => {
         id: user.id,
       });
 
-      const updatedUser: User = await meDetails();
-      dispatch(setMeDetails(updatedUser));
+      await updateMeDetails();
       setLoading(false);
 
       dispatch(
@@ -116,6 +132,116 @@ const UpdateProfile = () => {
     }
   };
 
+  const updateMeDetails = async () => {
+    try {
+      const updatedUser: User = await meDetails();
+      dispatch(setMeDetails(updatedUser));
+    } catch (error) {}
+  };
+
+  const createFormData = (photo: ImagePickerResponse) => {
+    const data = new FormData();
+    if (photo.uri) {
+      data.append("image", {
+        name: photo.fileName,
+        type: photo.type,
+        uri:
+          Platform.OS === "android"
+            ? photo.uri
+            : photo.uri.replace("file://", ""),
+      });
+    }
+
+    return data;
+  };
+
+  const handleUploadLogo = async (image: ImagePickerResponse) => {
+    setProfileLoading(true);
+    try {
+      const formData = createFormData(image);
+      const response = await updateLogo(formData, token);
+      await updateMeDetails();
+      setProfileLoading(false);
+      dispatch(setSnackbarMessage("Logo has been updated successfully."));
+    } catch (error) {
+      setProfileLoading(false);
+      dispatch(setSnackbarMessage("Unable to upload logo."));
+      console.log(error.response);
+    }
+  };
+
+  const openCamera = () => {
+    try {
+      launchCamera(
+        {
+          mediaType: "photo",
+          cameraType: "front",
+          maxHeight: 1024,
+          maxWidth: 1024,
+        },
+        (response: ImagePickerResponse) => {
+          handleUploadLogo(response);
+        },
+      );
+    } catch (error) {}
+  };
+
+  const openGallery = () => {
+    try {
+      launchImageLibrary(
+        {
+          mediaType: "photo",
+          maxHeight: 1024,
+          maxWidth: 1024,
+        },
+        (response: ImagePickerResponse) => {
+          handleUploadLogo(response);
+        },
+      );
+    } catch (error) {}
+  };
+
+  const renderActionSheet = () => {
+    return (
+      <ActionSheet
+        ref={profilePicRef}
+        options={["Open Camera", "Choose Photo", "Cancel"]}
+        cancelButtonIndex={2}
+        onPress={index => {
+          switch (index) {
+            case 0: {
+              openCamera();
+            }
+            case 1: {
+              openGallery();
+            }
+          }
+        }}
+      />
+    );
+  };
+
+  const renderLogoLoader = () => {
+    if (!profileLoading) return null;
+    return (
+      <Block
+        noflex
+        style={{
+          position: "absolute",
+          top: "0%",
+          left: "0%",
+          backgroundColor: theme.colors.backdrop,
+          width: 100,
+          height: 100,
+          borderRadius: 100,
+        }}>
+        <Block center middle>
+          <ActivityIndicator size={"small"} />
+        </Block>
+      </Block>
+    );
+  };
+
   return (
     <KeyboardAwareScrollView
       style={{ flex: 1 }}
@@ -125,13 +251,32 @@ const UpdateProfile = () => {
         <Block noflex center paddingHorizontal={20} paddingVertical={20}>
           {user.logo ? (
             <Block noflex>
-              <Avatar.Image
-                size={100}
-                source={{
-                  uri: resolveImage(user.logo),
-                }}
-                style={{ borderWidth: 2, borderColor: theme.colors.text }}
-              />
+              {/* <TouchableRipple
+                onPress={() => profilePicRef.current?.show()}
+                style={{ borderRadius: 100 }}>
+                
+              </TouchableRipple> */}
+              <Block noflex>
+                <Avatar.Image
+                  size={100}
+                  source={{
+                    uri: resolveImage(user.logo),
+                  }}
+                />
+                <IconButton
+                  icon="pencil"
+                  size={25}
+                  onPress={() => profilePicRef.current?.show()}
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 50,
+                    backgroundColor: theme.colors.backdrop,
+                  }}
+                />
+              </Block>
+              {renderLogoLoader()}
             </Block>
           ) : null}
         </Block>
@@ -160,7 +305,7 @@ const UpdateProfile = () => {
               rules={{ required: true }}
               defaultValue=""
             />
-            {errors?.username?.message ? (
+            {errors?.country?.message ? (
               <HelperText type="error" style={styles.error}>
                 {errors?.country?.message}
               </HelperText>
@@ -240,7 +385,6 @@ const UpdateProfile = () => {
                   inputStyle={styles.textInput}
                   placeholderTextColor="#adadad"
                   containerStyle={styles.textInputContainer}
-                  editable={false}
                 />
               )}
               name="username"
@@ -344,6 +488,7 @@ const UpdateProfile = () => {
           Update Profile
         </Button>
       </Block>
+      {renderActionSheet()}
     </KeyboardAwareScrollView>
   );
 };

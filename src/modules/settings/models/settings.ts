@@ -44,6 +44,11 @@ export interface IChangePassword {
   confirmPassword?: string;
 }
 
+export interface IUpdateLogo {
+  image: FormData;
+  data?: string;
+}
+
 export interface ProjectTheme {
   [key: string]: string;
 }
