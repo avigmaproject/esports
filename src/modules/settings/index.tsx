@@ -2,13 +2,14 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import reducer from "./store/reducer";
-import { StackParamList } from "./models/settings";
+import { StackParamList, SettingsState } from "./models/settings";
 import SettingsMenu from "./screens/SettingsMenu";
 import UpdateProfile from "./screens/UpdateProfile";
 import { Header } from "../../components";
 import ChangePassword from "./screens/ChangePassword";
 import MyTeams from "./screens/MyTeams";
 import MyMatches from "./screens/MyMatches";
+import MyTeamsDetails from "./screens/MyTeamsDetails";
 
 const SettingsStack = createStackNavigator<StackParamList>();
 
@@ -53,8 +54,17 @@ const StackNavigator = () => {
           title: "My Matches",
         }}
       />
+      <Screen
+        name="MyTeamsDetails"
+        component={MyTeamsDetails}
+        options={{
+          title: "My Teams Details",
+        }}
+      />
     </Navigator>
   );
 };
 
 export { reducer, StackNavigator };
+
+export type { SettingsState };

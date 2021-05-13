@@ -1,12 +1,12 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+
 import reducer from "./reducer";
 import { AuthState, StackParamList } from "./models";
 
 import WelcomeScreen from "./screens/Welcome";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
-import Header from "../../components/Header";
 
 const AuthStack = createStackNavigator<StackParamList>();
 

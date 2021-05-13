@@ -27,13 +27,13 @@ import {
 } from "react-native-image-picker";
 
 import { Block, Button, Text, TextInput, Dropdown } from "../../../components";
-import { Country, IUpdateProfile } from "../models";
+import { IPatchJson, IUpdateProfile } from "../models";
 import { User } from "../../auth/models";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { resolveImage } from "../../../utils";
 import { theme as coreTheme } from "./../../../core/theme";
-import { mapCountries, mapTimezones } from "../constants";
+import { indexedCountries, mapCountries, mapTimezones } from "../constants";
 import { updateLogo, updateUser } from "../services/profile";
 import { setSnackbarMessage } from "../../common/actions";
 import { meDetails } from "../../auth/services/auth";
@@ -51,7 +51,7 @@ const updateSchema = yup.object().shape({
   country: yup.string(),
   nationality: yup.string(),
   timezone: yup.string(),
-  discord: yup.string(),
+  // discord: yup.string(),
 });
 
 const UpdateProfile = () => {
@@ -76,7 +76,7 @@ const UpdateProfile = () => {
       country: user.country,
       nationality: user.nationality,
       timezone: user.timezone,
-      discord: user.discordTag,
+      // discord: user.discordTag,
     },
   });
 
@@ -111,10 +111,14 @@ const UpdateProfile = () => {
     Keyboard.dismiss();
     setLoading(true);
     try {
-      const response = await updateUser({
-        ...data,
-        id: user.id,
-      });
+      const dataKeys = Object.keys(data);
+      const patchReq: IPatchJson[] = dataKeys.map(key => ({
+        op: "replace",
+        path: `/${key}`,
+        value: data[key],
+      }));
+
+      const response = await updateUser(patchReq, user.id!);
 
       await updateMeDetails();
       setLoading(false);
@@ -123,9 +127,10 @@ const UpdateProfile = () => {
         setSnackbarMessage("Profile details has been updated successfully."),
       );
     } catch (error) {
-      console.log(error);
+      dispatch(setSnackbarMessage("Unable to update profile details."));
       setLoading(false);
       if (error.response) {
+        console.log(error.response.data);
       } else if (error.request) {
       } else {
       }
@@ -251,11 +256,6 @@ const UpdateProfile = () => {
         <Block noflex center paddingHorizontal={20} paddingVertical={20}>
           {user.logo ? (
             <Block noflex>
-              {/* <TouchableRipple
-                onPress={() => profilePicRef.current?.show()}
-                style={{ borderRadius: 100 }}>
-                
-              </TouchableRipple> */}
               <Block noflex>
                 <Avatar.Image
                   size={100}
@@ -291,16 +291,23 @@ const UpdateProfile = () => {
             </Block>
             <Controller
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <Dropdown
-                  value={value as ValueType}
-                  setValue={item => onChange(item)}
-                  items={countries}
-                  setItems={setCountries}
-                  searchable={true}
-                  zIndex={3000}
-                />
-              )}
+              render={({ field: { onChange, value } }) => {
+                let pl;
+                if (value) {
+                  pl = indexedCountries[value];
+                }
+                return (
+                  <Dropdown
+                    value={value as ValueType}
+                    setValue={item => onChange(item)}
+                    items={countries}
+                    setItems={setCountries}
+                    searchable={true}
+                    zIndex={3000}
+                    placeholder={pl}
+                  />
+                );
+              }}
               name="country"
               rules={{ required: true }}
               defaultValue=""
@@ -323,16 +330,23 @@ const UpdateProfile = () => {
             </Block>
             <Controller
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <Dropdown
-                  value={value as ValueType}
-                  setValue={item => onChange(item)}
-                  items={countries}
-                  setItems={setCountries}
-                  searchable={true}
-                  zIndex={2000}
-                />
-              )}
+              render={({ field: { onChange, value } }) => {
+                let pl;
+                if (value) {
+                  pl = indexedCountries[value];
+                }
+                return (
+                  <Dropdown
+                    value={value as ValueType}
+                    setValue={item => onChange(item)}
+                    items={countries}
+                    setItems={setCountries}
+                    searchable={true}
+                    zIndex={2000}
+                    placeholder={pl}
+                  />
+                );
+              }}
               name="nationality"
               rules={{ required: true }}
               defaultValue=""
@@ -350,16 +364,23 @@ const UpdateProfile = () => {
             </Block>
             <Controller
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <Dropdown
-                  value={value as ValueType}
-                  setValue={item => onChange(item)}
-                  items={timezones}
-                  setItems={setTimezones}
-                  searchable={true}
-                  zIndex={1000}
-                />
-              )}
+              render={({ field: { onChange, value } }) => {
+                let pl;
+                if (value) {
+                  pl = value;
+                }
+                return (
+                  <Dropdown
+                    value={value as ValueType}
+                    setValue={item => onChange(item)}
+                    items={timezones}
+                    setItems={setTimezones}
+                    searchable={true}
+                    zIndex={1000}
+                    placeholder={pl}
+                  />
+                );
+              }}
               name="timezone"
               rules={{ required: true }}
               defaultValue=""
@@ -421,7 +442,7 @@ const UpdateProfile = () => {
             />
           </Block>
         </Block>
-        <Block noflex paddingHorizontal={15} marginBottom={10}>
+        {/* <Block noflex paddingHorizontal={15} marginBottom={10}>
           <Block noflex middle>
             <Block noflex marginBottom={10}>
               <Text color={theme.colors.text}>Discord Tag</Text>
@@ -448,7 +469,7 @@ const UpdateProfile = () => {
               defaultValue=""
             />
           </Block>
-        </Block>
+        </Block> */}
         <Block noflex paddingHorizontal={15} marginBottom={10}>
           <Block noflex middle>
             <Block noflex marginBottom={10}>
@@ -464,15 +485,15 @@ const UpdateProfile = () => {
                   returnKeyType="done"
                   value={value}
                   onChangeText={value => onChange(value)}
-                  error={hasError("streamUrl")}
-                  errorText={errors?.streamUrl?.message}
+                  error={hasError("streamURL")}
+                  errorText={errors?.streamURL?.message}
                   autoCapitalize="none"
                   inputStyle={styles.textInput}
                   placeholderTextColor="#adadad"
                   containerStyle={styles.textInputContainer}
                 />
               )}
-              name="streamUrl"
+              name="streamURL"
               rules={{ required: true }}
               defaultValue=""
             />

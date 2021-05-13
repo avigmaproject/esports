@@ -34,10 +34,6 @@ const Header = ({
       return;
     }
     return (
-      // <Appbar.Action
-      //   icon={props => <Icon name="menu" {...props} />}
-      //   size={28}
-      // />
       <Appbar.Action
         icon={props => <Icon name="menu" {...props} />}
         size={28}
@@ -55,6 +51,7 @@ const Header = ({
       }}>
       {renderBackAction()}
       <Appbar.Content title={title} titleStyle={styles.titleStyle} />
+      {options.headerRight && options.headerRight({ tintColor: "red" })}
     </Appbar.Header>
   );
 };

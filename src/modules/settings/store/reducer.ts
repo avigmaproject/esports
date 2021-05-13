@@ -1,12 +1,45 @@
-import { SettingsState, Team } from "../models/settings";
+import { SettingsState } from "../models/settings";
+import * as fromActions from "./actions";
 
 const initialState: SettingsState = {
-  myTeams: [],
+  myTeamsLoading: false,
+  myTeamsLoaded: false,
+  myTeamsError: null,
+  myTeams: {
+    pendingRecruits: [],
+    teams: [],
+  },
   myMatches: [],
+  regions: [],
 };
 
-const reducer = (state: SettingsState = initialState, action) => {
+const reducer = (
+  state: SettingsState = initialState,
+  action: fromActions.SettingsActionTypes,
+): SettingsState => {
   switch (action.type) {
+    case fromActions.MY_TEAMS_LOADING: {
+      return {
+        ...state,
+        myTeamsLoading: true,
+        myTeamsError: null,
+      };
+    }
+    case fromActions.MY_TEAMS: {
+      return {
+        ...state,
+        myTeamsLoading: false,
+        myTeamsError: null,
+        myTeams: action.payload,
+      };
+    }
+    case fromActions.MY_TEAMS_ERROR: {
+      return {
+        ...state,
+        myTeamsLoading: false,
+        myTeamsError: action.payload,
+      };
+    }
     default: {
       return state;
     }
@@ -14,3 +47,9 @@ const reducer = (state: SettingsState = initialState, action) => {
 };
 
 export default reducer;
+
+export const getMyTeams = (state: SettingsState) => state.myTeams;
+export const getMyTeamsLoading = (state: SettingsState) => state.myTeamsLoaded;
+export const getMyTeamsError = (state: SettingsState) => state.myTeamsError;
+
+export const getGameRegions = (state: SettingsState) => state.regions;

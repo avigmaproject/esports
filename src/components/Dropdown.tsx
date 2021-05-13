@@ -1,9 +1,7 @@
 import React, { memo, useState } from "react";
 import { StyleSheet } from "react-native";
-import DropDownPicker, {
-  ValueType,
-  DropDownPickerProps,
-} from "react-native-dropdown-picker";
+import DropDownPicker, { ValueType } from "react-native-dropdown-picker";
+import { useTheme } from "react-native-paper";
 
 type Props = {
   value: ValueType;
@@ -13,6 +11,7 @@ type Props = {
   zIndex?: number;
   zIndexReverse?: number;
   searchable?: boolean;
+  placeholder?: string;
 };
 
 const Dropdown = ({
@@ -23,7 +22,9 @@ const Dropdown = ({
   zIndex,
   zIndexReverse,
   searchable,
+  placeholder,
 }: Props) => {
+  const theme = useTheme();
   const [open, setOpen] = useState<boolean>(false);
 
   const toggleOpen = () => {
@@ -42,6 +43,16 @@ const Dropdown = ({
       zIndex={zIndex}
       zIndexInverse={zIndexReverse}
       style={styles.dropdown}
+      scrollViewProps={{ nestedScrollEnabled: true, persistentScrollbar: true }}
+      placeholder={placeholder}
+      searchTextInputStyle={{
+        borderRadius: 0,
+        height: 40,
+        color: theme.colors.text,
+      }}
+      placeholderStyle={{
+        color: theme.colors.text,
+      }}
     />
   );
 };
