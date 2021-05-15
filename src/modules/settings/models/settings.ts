@@ -21,17 +21,58 @@ export interface Player {
 
 export interface Team {
   id: string;
-  game: string;
+  game?: string;
   name: string;
   logo: string;
   regionID: string;
   region: string;
-  active: boolean;
-  retired: boolean;
-  players: Player[];
+  active?: boolean;
+  retired?: boolean;
+  players?: Player[];
 }
 
-export interface Match {}
+export interface PendingMatch {
+  id: string;
+  invitingTeam: string;
+  invitingTeamName: string;
+  invitingTeamLogo: string;
+  invitingTeamOK: boolean;
+  invitedTeam: string;
+  invitedTeamName: string;
+  invitedTeamLogo: string;
+  invitedTeamOK: boolean;
+  dateScheduled: string;
+}
+
+export interface MapOptions {
+  id: string;
+  name: string;
+}
+
+export interface Score {
+  map: string;
+  homeScore: string | number | null;
+  awayScore: string | number | null;
+}
+
+export interface Substitute {
+  id: string;
+  name: string;
+}
+
+export interface Match {
+  homeTeam: Team;
+  awayTeam: Team;
+  scores: Score[];
+  mapsOptions: MapOptions[];
+  substitutesOptions: Substitute[];
+  dateScheduled: string;
+}
+
+export interface MyMatches {
+  pending: PendingMatch[];
+  scheduled: Match[];
+}
 
 export interface MyTeams {
   pendingRecruits: PendingRectruit[];
@@ -80,6 +121,7 @@ export interface IPatchJson {
 }
 
 export interface IChangePassword {
+  [key: string]: string | undefined;
   oldPassword: string;
   password: string;
   confirmPassword?: string;
@@ -122,7 +164,7 @@ export interface SettingsState {
   myTeamsLoaded: boolean;
   myTeamsError: string | null;
   myTeams: MyTeams;
-  myMatches: Match[];
+  myMatches: MyMatches;
   regions: IRegion[];
 }
 
@@ -135,6 +177,9 @@ export type StackParamList = {
   MyTeamsDetails: {
     teamId: string;
     teamName: string;
+  };
+  MatchDetails: {
+    match: Match;
   };
 };
 

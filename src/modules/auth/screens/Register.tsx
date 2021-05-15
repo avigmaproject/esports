@@ -5,6 +5,7 @@ import {
   ScrollView,
   Platform,
   Keyboard,
+  Linking,
 } from "react-native";
 import {
   ActivityIndicator,
@@ -27,6 +28,8 @@ import {
   IUsernameExists,
 } from "../models";
 import { checkUsername, register } from "../services/auth";
+import { useDispatch } from "react-redux";
+import { setSnackbarMessage } from "../../common/actions";
 
 type Props = {
   navigation: AuthStackNavigationProp;
@@ -65,7 +68,13 @@ const registerSchema = yup.object().shape({
     .string()
     .required("Username is required")
     .matches(/^[a-zA-Z0-9\-_]{0,40}$/, "Username must be alphanumeric"),
-  password: yup.string().required("Password is required"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+      "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character",
+    ),
   confirmPassword: yup
     .string()
     .required("Confirm Password is required")
@@ -75,6 +84,7 @@ const registerSchema = yup.object().shape({
 });
 
 const Login = ({ navigation }: Props) => {
+  const dispatch = useDispatch();
   const {
     control,
     formState: { errors },
@@ -103,6 +113,9 @@ const Login = ({ navigation }: Props) => {
       delete data.confirmPassword;
       const response = await register(data);
       setLoading(false);
+      dispatch(
+        setSnackbarMessage("Your account has been created. Please login."),
+      );
       navigation.goBack();
     } catch (error) {
       console.log({ error: error.response.data });
@@ -380,7 +393,10 @@ const Login = ({ navigation }: Props) => {
               <Text color={theme.colors.text} size={12}>
                 By signing-up, you agree to the{" "}
               </Text>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity
+                onPress={() =>
+                  Linking.openURL("https://vrmasterleague.com/TermsOfUse.aspx")
+                }>
                 <Block
                   noflex
                   style={{

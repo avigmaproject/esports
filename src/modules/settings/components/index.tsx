@@ -1,2 +1,3 @@
 import Teams from "./Teams";
-export { Teams };
+import { Pending, Scheduled } from "./matches";
+export { Teams, Pending, Scheduled };

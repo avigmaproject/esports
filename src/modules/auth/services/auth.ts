@@ -1,6 +1,12 @@
 import { CancelToken } from "axios";
 import { api } from "../../../utils";
-import { LOGIN, REGISTER, ME_DETAILS, SEARCH_EXISTS } from "../constants";
+import {
+  LOGIN,
+  REGISTER,
+  ME_DETAILS,
+  SEARCH_EXISTS,
+  FORGOT_PASSWORD,
+} from "../constants";
 import {
   CreateAccountData,
   ILogin,
@@ -31,6 +37,8 @@ export const checkUsername = async (username: string) => {
   );
 };
 
-export const forgotPassword = async () => {};
+export const forgotPassword = async (data: FormData) => {
+  return await api().post(`${FORGOT_PASSWORD}`, data);
+};
 
 export const resetPassword = async () => {};

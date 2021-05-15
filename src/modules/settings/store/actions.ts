@@ -2,14 +2,19 @@ import { Action, ActionCreator } from "redux";
 import { AppDispatch } from "../../../store";
 import { User } from "../../auth/models";
 import { setSnackbarMessage } from "../../common/actions";
-import { IRegion, MyTeams, Team } from "../models";
+import { IRegion, Match, MyMatches, MyTeams, Team } from "../models";
 import * as fromServices from "../services";
 
 export const UPDATE_PROFILE = "settingsReducer/UPDATE_PROFILE";
+
+// My Teams
 export const MY_TEAMS = "settingsReducer/MY_TEAMS";
 export const MY_TEAMS_LOADING = "settingsReducer/MY_TEAMS_LOADING";
 export const MY_TEAMS_ERROR = "settingsReducer/MY_TEAMS_ERROR";
 export const GAME_REGIONS = "settingsReducer/GAME_REGIONS";
+
+// My Matches
+export const MY_MATCHES = "settingsReducer/MY_MATCHES";
 
 // Action Types
 
@@ -37,12 +42,18 @@ interface GameRegionActionType {
   payload: IRegion[];
 }
 
+interface MyMatchesActionType {
+  type: typeof MY_MATCHES;
+  payload: MyMatches;
+}
+
 export type SettingsActionTypes =
   | UpdateProfile
   | MyTeamsActionType
   | MyTeamsLoadingActionType
   | MyTeamsErrorActionType
-  | GameRegionActionType;
+  | GameRegionActionType
+  | MyMatchesActionType;
 
 // End of Action Types
 
@@ -146,3 +157,29 @@ export const loadGameRegions = (game: string) => {
 };
 
 // End of My Teams
+
+// Start of My Matches
+
+export const MyMatchesAc: ActionCreator<SettingsActionTypes> = (
+  data: MyMatches,
+) => {
+  return { type: MY_MATCHES, payload: data };
+};
+
+export const loadMyMatches = () => {
+  return (dispatch: AppDispatch) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const data = await fromServices.myMatches();
+        dispatch(MyMatchesAc(data));
+        resolve(true);
+      } catch (error) {
+        dispatch(
+          setSnackbarMessage("An error occurred while processing your request"),
+        );
+        reject(error);
+      }
+    });
+  };
+};
+// End of My Matches

@@ -29,3 +29,13 @@ export const getTeamById = createSelector(getTeams, teams => (teamId: string) =>
 //   (team: Team, userId: string) => team.players.find(item => item.id === userId),
 //   player => player.name === "Team Owner",
 // );
+
+export const getPendingMatches = createSelector(
+  fromReducers.getMyMatches,
+  data => data.pending,
+);
+
+export const getScheduledMatches = createSelector(
+  fromReducers.getMyMatches,
+  data => data.scheduled,
+);

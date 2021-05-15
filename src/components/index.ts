@@ -12,6 +12,7 @@ import PaperSnackbar from "./Snackbar";
 import DrawerContent from "./DrawerContent";
 import TabBarIcon from "./TabBarIcon";
 import Dropdown from "./Dropdown";
+import EmptyBlockMessage from "./EmptyBlockMessage";
 
 export {
   Block,
@@ -28,4 +29,5 @@ export {
   DrawerContent,
   TabBarIcon,
   Dropdown,
+  EmptyBlockMessage,
 };

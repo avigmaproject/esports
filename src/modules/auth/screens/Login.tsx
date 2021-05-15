@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Keyboard,
 } from "react-native";
-import { IconButton, useTheme } from "react-native-paper";
+import { IconButton, TouchableRipple, useTheme } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -166,9 +166,12 @@ const Login = ({ navigation }: Props) => {
             />
 
             <Block noflex>
-              <Text color={theme.colors.text} right subtitle>
-                Forgot Password?
-              </Text>
+              <TouchableRipple
+                onPress={() => navigation.navigate("ForgotPassword")}>
+                <Text color={theme.colors.text} right subtitle>
+                  Forgot Password?
+                </Text>
+              </TouchableRipple>
             </Block>
           </Block>
           <Block noflex marginTop={30} marginBottom={50}>

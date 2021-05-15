@@ -2,7 +2,15 @@ import axios from "axios";
 import { API_BASE_URL } from "../../../config";
 import { api } from "../../../utils";
 import { User } from "../../auth/models";
-import { IPatchJson, IRegion, MyTeams, PendingRectruit, Team } from "../models";
+import {
+  IPatchJson,
+  IRegion,
+  Match,
+  MyMatches,
+  MyTeams,
+  PendingRectruit,
+  Team,
+} from "../models";
 
 const UPDATE_PROFILE = `/User`;
 const MODIFY_LOGO = `/User/Logo`;
@@ -44,8 +52,8 @@ export const leaveTeam = async (team: Team) => {
   return await api().delete(`${TEAMS_PREFIX}/${team.id}`);
 };
 
-export const myMatches = async () => {
-  return await api().get(`${MY_MATCHES}`);
+export const myMatches = async (): Promise<MyMatches> => {
+  return await api().get<any, MyMatches>(`${MY_MATCHES}`);
 };
 
 export const updateUser = async (data: IPatchJson[], userId: string) => {

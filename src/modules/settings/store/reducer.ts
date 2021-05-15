@@ -9,7 +9,10 @@ const initialState: SettingsState = {
     pendingRecruits: [],
     teams: [],
   },
-  myMatches: [],
+  myMatches: {
+    pending: [],
+    scheduled: [],
+  },
   regions: [],
 };
 
@@ -40,6 +43,12 @@ const reducer = (
         myTeamsError: action.payload,
       };
     }
+    case fromActions.MY_MATCHES: {
+      return {
+        ...state,
+        myMatches: action.payload,
+      };
+    }
     default: {
       return state;
     }
@@ -53,3 +62,5 @@ export const getMyTeamsLoading = (state: SettingsState) => state.myTeamsLoaded;
 export const getMyTeamsError = (state: SettingsState) => state.myTeamsError;
 
 export const getGameRegions = (state: SettingsState) => state.regions;
+
+export const getMyMatches = (state: SettingsState) => state.myMatches;

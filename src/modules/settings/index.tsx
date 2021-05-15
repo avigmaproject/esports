@@ -10,6 +10,7 @@ import ChangePassword from "./screens/ChangePassword";
 import MyTeams from "./screens/MyTeams";
 import MyMatches from "./screens/MyMatches";
 import MyTeamsDetails from "./screens/MyTeamsDetails";
+import MatchDetails from "./screens/MatchDetails";
 
 const SettingsStack = createStackNavigator<StackParamList>();
 
@@ -59,6 +60,13 @@ const StackNavigator = () => {
         component={MyTeamsDetails}
         options={{
           title: "My Teams Details",
+        }}
+      />
+      <Screen
+        name="MatchDetails"
+        component={MatchDetails}
+        options={{
+          title: "Match Details",
         }}
       />
     </Navigator>

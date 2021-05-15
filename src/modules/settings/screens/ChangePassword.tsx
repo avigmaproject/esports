@@ -9,7 +9,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useDispatch, useSelector } from "react-redux";
 
 import { Block, Button, Text, TextInput } from "../../../components";
-import { IChangePassword } from "../models";
+import { IChangePassword, IPatchJson } from "../models";
 import { User } from "../../auth/models";
 import { RootState } from "../../../store";
 import { theme as coreTheme } from "./../../../core/theme";
@@ -53,11 +53,15 @@ const ChangePassword = () => {
     setLoading(true);
     try {
       delete data.confirmPassword;
-      const userData = {
-        ...user,
-        ...data,
-      };
-      const response = await updateUser(userData);
+
+      const dataKeys = Object.keys(data);
+      const patchReq: IPatchJson[] = dataKeys.map(key => ({
+        op: "replace",
+        path: `/${key}`,
+        value: data[key],
+      }));
+
+      const response = await updateUser(patchReq, user.id!);
 
       setLoading(false);
       reset({

@@ -1,6 +1,6 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { useTheme } from "react-native-paper";
+import { Linking, StyleSheet } from "react-native";
+import { TouchableRipple, useTheme } from "react-native-paper";
 import { Block, Text, Button, Logo } from "../../../components";
 import { theme as coreTheme } from "./../../../core/theme";
 import { AuthStackNavigationProp } from "../models";
@@ -70,9 +70,14 @@ const WelcomeScreen = ({ navigation }: Props) => {
           <Text color={theme.colors.text} center>
             By using this service you accept
           </Text>
-          <Text color={theme.colors.text} center bold>
-            Terms & Services and Privacy Policy
-          </Text>
+          <TouchableRipple
+            onPress={() =>
+              Linking.openURL("https://vrmasterleague.com/TermsOfUse.aspx")
+            }>
+            <Text color={theme.colors.text} center bold>
+              Terms & Services and Privacy Policy
+            </Text>
+          </TouchableRipple>
         </Block>
       </Block>
     </SafeAreaView>
@@ -84,9 +89,6 @@ export default WelcomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // marginVertical: 20,
-    // paddingVertical: 30,
-    // justifyContent: "space-around",
   },
   border: {
     borderWidth: 1,

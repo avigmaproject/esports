@@ -50,6 +50,7 @@ export type StackParamList = {
   Welcome: undefined;
   Login: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
 };
 
 export type AuthStackNavigationProp = StackNavigationProp<StackParamList>;

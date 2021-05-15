@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { Linking, ScrollView, StyleSheet } from "react-native";
 import { useTheme, List, Avatar, Divider } from "react-native-paper";
 import { useSelector } from "react-redux";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
@@ -101,7 +101,9 @@ const SettingsMenu = ({ navigation }: Props) => {
                 icon={props => <MaterialIcon name="privacy-tip" {...props} />}
               />
             )}
-            onPress={() => navigateToScreen("UpdateProfile")}
+            onPress={() =>
+              Linking.openURL("https://vrmasterleague.com/TermsOfUse.aspx")
+            }
           />
           <Divider style={styles.divider} />
           <List.Item

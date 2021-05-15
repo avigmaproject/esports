@@ -1,21 +1,16 @@
+import { useFocusEffect } from "@react-navigation/core";
 import React, { useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-
-import { Block, Text } from "../../../components";
-import {
-  MyTeams as IMyTeams,
-  SettingsStackNavigationProp,
-  PendingRectruit,
-  Team,
-} from "../models";
-import { Divider } from "react-native-paper";
-import { Alert, Dimensions, Image, FlatList } from "react-native";
+import { Alert, Dimensions, FlatList, Image } from "react-native";
+import { Tabs, TabScreen } from "react-native-paper-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import { resolveImage } from "../../../utils";
-import { loadMyTeams, getPendingRecruits, getTeams, leaveTeam } from "../store";
+import { Block, EmptyBlockMessage, Text } from "../../../components";
 import { RootState } from "../../../store";
-import { Teams } from "../components";
+import { resolveImage } from "../../../utils";
 import { setSnackbarMessage } from "../../common/actions";
+import { Teams } from "../components";
+import { PendingRectruit, SettingsStackNavigationProp, Team } from "../models";
+import { leaveTeam } from "../services";
+import { getPendingRecruits, getTeams, loadMyTeams } from "../store";
 
 type Props = {
   navigation: SettingsStackNavigationProp;
@@ -32,6 +27,11 @@ const MyTeams = ({ navigation }: Props) => {
   const teams = useSelector((state: RootState) =>
     getTeams(state.settingsReducer),
   );
+
+  const pendTitle =
+    pendingRecruits.length > 0
+      ? `Pending Recruit(${pendingRecruits.length})`
+      : "Pending Recruit";
 
   useFocusEffect(
     useCallback(() => {
@@ -86,11 +86,6 @@ const MyTeams = ({ navigation }: Props) => {
   };
 
   const renderItem = ({ item }: { item: PendingRectruit; index: number }) => {
-    let ITEM_WIDTH = Math.round(SLIDER_WIDTH) - 60;
-    if (pendingRecruits.length == 1) {
-      ITEM_WIDTH = Math.round(SLIDER_WIDTH) - 20;
-    }
-
     let team = teams.find(recruit => recruit.id === item.teamID);
 
     return (
@@ -99,8 +94,6 @@ const MyTeams = ({ navigation }: Props) => {
         row
         padding={10}
         style={{
-          height: 120,
-          width: ITEM_WIDTH,
           borderWidth: 1,
           borderColor: "#fff",
         }}>
@@ -129,42 +122,32 @@ const MyTeams = ({ navigation }: Props) => {
   };
 
   return (
-    <Block>
-      <Block noflex marginVertical={10} marginHorizontal={10}>
-        <Block noflex paddingBottom={10}>
-          <Text h3 bold>
-            Pending Recruits
-          </Text>
+    <Tabs>
+      <TabScreen label={"Teams"}>
+        <Block margin={10}>
+          <Teams
+            items={teams}
+            onEdit={handleTeamEdit}
+            onRemove={handleTeamRemove}
+          />
         </Block>
-        {pendingRecruits.length > 0 ? (
+      </TabScreen>
+      <TabScreen label={pendTitle}>
+        <Block margin={10}>
           <FlatList
             data={pendingRecruits}
             keyExtractor={item => `pending-recruit-${item.id}`}
             renderItem={renderItem}
-            horizontal
-            showsHorizontalScrollIndicator={false}
             style={{ marginBottom: 10 }}
+            ListEmptyComponent={() => (
+              <EmptyBlockMessage
+                message={"No pending recruits are available."}
+              />
+            )}
           />
-        ) : (
-          <Block noflex>
-            <Text>No pending recruit request are availble.</Text>
-          </Block>
-        )}
-      </Block>
-      <Divider style={{ borderColor: "#fff", borderWidth: 1 }} />
-      <Block noflex marginVertical={10} marginHorizontal={10}>
-        <Block noflex paddingBottom={10}>
-          <Text h3 bold>
-            Teams
-          </Text>
         </Block>
-        <Teams
-          items={teams}
-          onEdit={handleTeamEdit}
-          onRemove={handleTeamRemove}
-        />
-      </Block>
-    </Block>
+      </TabScreen>
+    </Tabs>
   );
 };
 
