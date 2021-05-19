@@ -433,8 +433,6 @@ const MyTeamsDetails = ({ navigation, route }: Props) => {
     );
   };
 
-  console.log({ isStarter, errors });
-
   return (
     <KeyboardAwareScrollView
       style={{ flex: 1 }}

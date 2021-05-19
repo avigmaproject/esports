@@ -1,6 +1,6 @@
 import axios from "axios";
 import dayjs from "dayjs";
-import { Dimensions, Animated } from "react-native";
+import { Dimensions, Animated, Linking } from "react-native";
 import {
   getInputRangeFromIndexes,
   CarouselProps,
@@ -436,3 +436,5 @@ export function animatedStyles(
     ...animatedTransform,
   };
 }
+
+export const openUrl = (url: string) => Linking.openURL(url);

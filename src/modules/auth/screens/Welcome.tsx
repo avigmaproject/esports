@@ -5,6 +5,8 @@ import { Block, Text, Button, Logo } from "../../../components";
 import { theme as coreTheme } from "./../../../core/theme";
 import { AuthStackNavigationProp } from "../models";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TERMS_AND_CONDITIONS_URL } from "../../../config";
+import { openUrl } from "../../../utils";
 
 type Props = {
   navigation: AuthStackNavigationProp;
@@ -70,10 +72,7 @@ const WelcomeScreen = ({ navigation }: Props) => {
           <Text color={theme.colors.text} center>
             By using this service you accept
           </Text>
-          <TouchableRipple
-            onPress={() =>
-              Linking.openURL("https://vrmasterleague.com/TermsOfUse.aspx")
-            }>
+          <TouchableRipple onPress={() => openUrl(TERMS_AND_CONDITIONS_URL)}>
             <Text color={theme.colors.text} center bold>
               Terms & Services and Privacy Policy
             </Text>

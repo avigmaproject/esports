@@ -1,19 +1,21 @@
 import React from "react";
 import { Linking, ScrollView, StyleSheet } from "react-native";
 import { useTheme, List, Avatar, Divider } from "react-native-paper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import AntDesignIcon from "react-native-vector-icons/AntDesign";
 
 import { Block, Text } from "../../../components";
 import { RootState } from "../../../store";
-import { formatDate, resolveImage } from "../../../utils";
+import { formatDate, openUrl, resolveImage } from "../../../utils";
 import { User } from "../../auth/models";
 
 import {
   SettingsStackNavigationProp,
   StackParamList,
 } from "../models/settings";
+import { logoutUser } from "../../auth/actions";
+import { TERMS_AND_CONDITIONS_URL } from "../../../config";
 
 type Props = {
   navigation: SettingsStackNavigationProp;
@@ -21,10 +23,15 @@ type Props = {
 
 const SettingsMenu = ({ navigation }: Props) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const user: User = useSelector((state: RootState) => state.authReducer.user)!;
 
   const navigateToScreen = (screen: keyof StackParamList) => {
     navigation.navigate(screen);
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
   };
 
   return (
@@ -101,15 +108,13 @@ const SettingsMenu = ({ navigation }: Props) => {
                 icon={props => <MaterialIcon name="privacy-tip" {...props} />}
               />
             )}
-            onPress={() =>
-              Linking.openURL("https://vrmasterleague.com/TermsOfUse.aspx")
-            }
+            onPress={() => openUrl(TERMS_AND_CONDITIONS_URL)}
           />
           <Divider style={styles.divider} />
           <List.Item
             title="Logout"
             left={() => <List.Icon color={theme.colors.error} icon="logout" />}
-            onPress={() => {}}
+            onPress={handleLogout}
           />
           <Divider style={styles.divider} />
         </List.Section>
