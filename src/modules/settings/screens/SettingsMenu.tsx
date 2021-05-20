@@ -1,5 +1,5 @@
 import React from "react";
-import { Linking, ScrollView, StyleSheet } from "react-native";
+import { Alert, Linking, ScrollView, StyleSheet } from "react-native";
 import { useTheme, List, Avatar, Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
@@ -31,7 +31,18 @@ const SettingsMenu = ({ navigation }: Props) => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutUser());
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Logout",
+          onPress: () => dispatch(logoutUser()),
+        },
+        { text: "Cancel" },
+      ],
+      { cancelable: false },
+    );
   };
 
   return (

@@ -1,6 +1,9 @@
 import React, { memo, useState } from "react";
 import { StyleSheet } from "react-native";
-import DropDownPicker, { ValueType } from "react-native-dropdown-picker";
+import DropDownPicker, {
+  ListModeType,
+  ValueType,
+} from "react-native-dropdown-picker";
 import { useTheme } from "react-native-paper";
 
 type Props = {
@@ -12,6 +15,7 @@ type Props = {
   zIndexReverse?: number;
   searchable?: boolean;
   placeholder?: string;
+  listMode?: ListModeType;
 };
 
 const Dropdown = ({
@@ -23,6 +27,7 @@ const Dropdown = ({
   zIndexReverse,
   searchable,
   placeholder,
+  listMode,
 }: Props) => {
   const theme = useTheme();
   const [open, setOpen] = useState<boolean>(false);
@@ -36,6 +41,7 @@ const Dropdown = ({
       open={open}
       value={value}
       items={items}
+      listMode={listMode}
       setValue={setValue}
       setItems={setItems}
       setOpen={toggleOpen}
