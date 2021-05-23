@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import "react-native-gesture-handler";
 import { StatusBar } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaProvider } from "react-native-safe-area-context";

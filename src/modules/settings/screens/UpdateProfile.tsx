@@ -26,6 +26,9 @@ import {
   Callback,
   ImagePickerResponse,
 } from "react-native-image-picker";
+import ImagePicker, {
+  Image as CropImage,
+} from "react-native-image-crop-picker";
 
 import { Block, Button, Text, TextInput, Dropdown } from "../../../components";
 import { IPatchJson, IUpdateProfile } from "../models";
@@ -85,7 +88,6 @@ const UpdateProfile = () => {
   const theme = useTheme();
   const profilePicRef = useRef<ActionSheet>(null);
   const [loading, setLoading] = useState(false);
-  const [hasUsernameChanged, setHasusernameChanged] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [timezones, setTimezone] = useState<{ label: string; value: string }[]>(
     [],
@@ -93,8 +95,6 @@ const UpdateProfile = () => {
   const [countries, setCountry] = useState<{ label: string; value: string }[]>(
     [],
   );
-
-  console.log({ dirtyFields });
 
   useEffect(() => {
     setCountries();
@@ -174,6 +174,13 @@ const UpdateProfile = () => {
     } catch (error) {}
   };
 
+  const getFileName = (imagePath: string) => {
+    return imagePath.substring(
+      imagePath.lastIndexOf("/") + 1,
+      imagePath.length,
+    );
+  };
+
   const createFormData = (photo: ImagePickerResponse) => {
     const data = new FormData();
     if (photo.uri) {
@@ -207,18 +214,25 @@ const UpdateProfile = () => {
 
   const openCamera = () => {
     try {
-      launchCamera(
-        {
-          mediaType: "photo",
-          cameraType: "front",
-          maxHeight: 1024,
-          maxWidth: 1024,
-        },
-        (response: ImagePickerResponse) => {
-          handleUploadLogo(response);
-        },
-      );
-    } catch (error) {}
+      ImagePicker.openCamera({
+        width: 1024,
+        height: 1024,
+        mediaType: "photo",
+        cropping: false,
+        includeExif: false,
+        compressImageQuality: 0.99,
+      }).then((image: CropImage) => {
+        if (image) {
+          handleUploadLogo({
+            uri: image.path,
+            type: image.mime,
+            fileName: getFileName(image.path),
+          });
+        }
+      });
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   const openGallery = () => {
@@ -230,7 +244,9 @@ const UpdateProfile = () => {
           maxWidth: 1024,
         },
         (response: ImagePickerResponse) => {
-          handleUploadLogo(response);
+          if (response.uri) {
+            handleUploadLogo(response);
+          }
         },
       );
     } catch (error) {}

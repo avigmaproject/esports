@@ -5746,6 +5746,11 @@
     "invariant" "^2.2.4"
     "prop-types" "^15.7.2"
 
+"react-native-image-crop-picker@^0.36.2":
+  "integrity" "sha512-cTauoEHHzx14ZHA7Pt65e7RVnbn1WRYQz2ufTZp9/05EtNDrdsXwNhgtXdWVFbOhYB8qgUFQjy2NelkBOHIH3g=="
+  "resolved" "https://registry.npmjs.org/react-native-image-crop-picker/-/react-native-image-crop-picker-0.36.2.tgz"
+  "version" "0.36.2"
+
 "react-native-image-picker@^3.5.0":
   "integrity" "sha512-i3vr3cM/nu+FbpDpW+msxKX5dvFCMo0DIvHgDGxD9r43KgEDHcROavjQSAXjul/WDfMA2dqlR6gqi1AM8JLkvA=="
   "resolved" "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-3.5.0.tgz"
@@ -5840,7 +5845,7 @@
     "prop-types" "^15.7.2"
     "yargs" "^16.1.1"
 
-"react-native@*", "react-native@>=0.48.4", "react-native@0.64.0":
+"react-native@*", "react-native@>=0.40.0", "react-native@>=0.48.4", "react-native@0.64.0":
   "integrity" "sha512-8dhSHBthgGwAjU+OjqUEA49229ThPMQH7URH0u8L0xoQFCnZO2sZ9Wc6KcbxI0x9KSmjCMFFZqRe3w3QsRv64g=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.64.0.tgz"
   "version" "0.64.0"
