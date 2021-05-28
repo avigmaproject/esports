@@ -45,6 +45,10 @@ const Login = ({ navigation }: Props) => {
     setError: setErrorForm,
   } = useForm<ILogin>({
     resolver: yupResolver(loginSchema),
+    defaultValues: {
+      username: "avigmadev",
+      password: "123456",
+    },
   });
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -62,8 +66,6 @@ const Login = ({ navigation }: Props) => {
       dispatch(setMeDetails(user));
       setLoading(false);
     } catch (error) {
-      console.log(error);
-
       let message = "";
       if (error.response) {
         const {

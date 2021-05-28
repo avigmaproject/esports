@@ -3,11 +3,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { StackParamList } from "./models";
 import Home from "./screens/Home";
-import reducer from "./reducer";
+import reducer from "./store/reducer";
 import { Header } from "../../components";
 import Details from "./screens/Details";
+import SelectLeague from "./screens/SelectLeague";
 
 const HomeStack = createStackNavigator<StackParamList>();
+const SelectLeagueStack = createStackNavigator();
 
 const StackNavigator = () => {
   const { Navigator, Screen } = HomeStack;
@@ -27,4 +29,17 @@ const StackNavigator = () => {
   );
 };
 
-export { reducer, StackNavigator };
+const SelectLeagueNavigator = () => {
+  const { Navigator, Screen } = SelectLeagueStack;
+  return (
+    <Navigator>
+      <Screen
+        name="SelectLeague"
+        component={SelectLeague}
+        options={{ headerTitle: "Select League" }}
+      />
+    </Navigator>
+  );
+};
+
+export { reducer, StackNavigator, SelectLeagueNavigator };

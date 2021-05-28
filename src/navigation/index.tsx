@@ -12,11 +12,16 @@ import {
   SplashStackNavigator,
   StackNavigator as NoInternetStackNavigator,
 } from "../modules/common";
-import { StackNavigator as HomeNavigator } from "../modules/home";
+import {
+  SelectLeagueNavigator,
+  StackNavigator as HomeNavigator,
+} from "../modules/home";
+import { PlayersStackNavigator } from "../modules/tournaments";
 import { RootState } from "../store";
 import { CombinedDarkTheme } from "./../core/theme";
 import { DrawerContent, TabBar, TabBarIcon } from "../components";
 import { Image } from "react-native";
+import { HomeState } from "../modules/home/models";
 
 const MaterialBottomTab = createMaterialBottomTabNavigator();
 const AuthenticatedDrawer = createDrawerNavigator();
@@ -56,7 +61,7 @@ const BottomTabNavigator = () => {
       />
       <Screen
         name="Players"
-        component={HomeNavigator}
+        component={PlayersStackNavigator}
         options={{
           title: "Players",
           tabBarIcon: ({ focused }) => {
@@ -126,11 +131,19 @@ const MaterialBottomTabNavigator = () => {
 
 const AuthenticatedDrawerNavigator = () => {
   const { Navigator, Screen } = AuthenticatedDrawer;
-  return (
-    <Navigator drawerContent={() => <DrawerContent />}>
-      <Screen name="Home" component={BottomTabNavigator} />
-    </Navigator>
+  const { activeLeague }: HomeState = useSelector(
+    (state: RootState) => state.homeReducer,
   );
+
+  if (!activeLeague) {
+    return <SelectLeagueNavigator />;
+  } else {
+    return (
+      <Navigator drawerContent={() => <DrawerContent />}>
+        <Screen name="Home" component={BottomTabNavigator} />
+      </Navigator>
+    );
+  }
 };
 
 export const RootNavigator = () => {

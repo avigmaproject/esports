@@ -17,6 +17,7 @@ export interface Player {
   nationality: string;
   roleID: string;
   role: string;
+  team?: Team;
 }
 
 export interface Team {

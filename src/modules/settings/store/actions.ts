@@ -140,13 +140,11 @@ export const leaveTeam = (team: Team) => {
 };
 
 export const loadGameRegions = (game: string) => {
-  // console.log({ game });
-
   return (dispatch: AppDispatch) => {
     return new Promise(async (resolve, reject) => {
       try {
         const data = await fromServices.fetchGameRegions(game);
-        dispatch(data);
+        dispatch(LoadGameRegions(data));
         resolve(true);
       } catch (error) {
         dispatch(LoadGameRegions([]));

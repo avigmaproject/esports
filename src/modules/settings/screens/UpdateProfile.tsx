@@ -221,6 +221,7 @@ const UpdateProfile = () => {
         cropping: false,
         includeExif: false,
         compressImageQuality: 0.99,
+        useFrontCamera: true,
       }).then((image: CropImage) => {
         if (image) {
           handleUploadLogo({

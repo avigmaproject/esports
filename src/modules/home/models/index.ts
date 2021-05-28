@@ -5,6 +5,15 @@ export type StackParamList = {
   DetailPage: undefined;
 };
 
-export interface HomeState {}
+export interface League {
+  title: string;
+  key: string;
+  logo?: string;
+}
+
+export interface HomeState {
+  leagues: League[];
+  activeLeague: League | null;
+}
 
 export type HomeStackNavigationProp = StackNavigationProp<StackParamList>;
