@@ -2,15 +2,14 @@ import { useFocusEffect } from "@react-navigation/core";
 import React, { useCallback } from "react";
 import { Alert, Dimensions, FlatList, Image } from "react-native";
 import { Tabs, TabScreen } from "react-native-paper-tabs";
-import { useDispatch, useSelector } from "react-redux";
+
 import { Block, EmptyBlockMessage, Text } from "../../../components";
-import { RootState } from "../../../store";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import { resolveImage } from "../../../utils";
-import { setSnackbarMessage } from "../../common/actions";
+import { setSnackbarMessage } from "../../common/store";
 import { Teams } from "../components";
 import { PendingRectruit, SettingsStackNavigationProp, Team } from "../models";
-import { leaveTeam } from "../services";
-import { getPendingRecruits, getTeams, loadMyTeams } from "../store";
+import { getPendingRecruits, getTeams, loadMyTeams, leaveTeam } from "../store";
 
 type Props = {
   navigation: SettingsStackNavigationProp;
@@ -19,14 +18,10 @@ type Props = {
 const SLIDER_WIDTH = Dimensions.get("window").width;
 
 const MyTeams = ({ navigation }: Props) => {
-  const dispatch = useDispatch();
-  const pendingRecruits = useSelector((state: RootState) =>
-    getPendingRecruits(state.settingsReducer),
-  );
+  const dispatch = useAppDispatch();
+  const pendingRecruits = useAppSelector(getPendingRecruits);
 
-  const teams = useSelector((state: RootState) =>
-    getTeams(state.settingsReducer),
-  );
+  const teams = useAppSelector(getTeams);
 
   const pendTitle =
     pendingRecruits.length > 0

@@ -11,8 +11,8 @@ import { AuthStackNavigationProp } from "../models";
 
 import Header from "../components/Header";
 import { forgotPassword } from "../services/auth";
-import { useDispatch } from "react-redux";
-import { setSnackbarMessage } from "../../common/actions";
+import { setSnackbarMessage } from "../../common/store";
+import { useAppDispatch } from "../../../store";
 
 type Props = {
   navigation: AuthStackNavigationProp;
@@ -34,7 +34,7 @@ const ForgotPassword = ({ navigation }: Props) => {
   } = useForm<{ email: string }>({
     resolver: yupResolver(loginSchema),
   });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const theme = useTheme();
   const [loading, setLoading] = useState(false);
 

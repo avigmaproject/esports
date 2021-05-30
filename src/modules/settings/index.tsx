@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import reducer from "./store/reducer";
+import reducer from "./store";
 import { StackParamList, SettingsState } from "./models/settings";
 import SettingsMenu from "./screens/SettingsMenu";
 import UpdateProfile from "./screens/UpdateProfile";

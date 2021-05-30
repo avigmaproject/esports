@@ -18,16 +18,16 @@ import * as yup from "yup";
 
 import React, { useCallback, useRef, useState } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { useDispatch, useSelector } from "react-redux";
+
 import { Block, Button, Text, TextInput } from "../../../components";
-import { RootState } from "../../../store";
+import { RootState, useAppDispatch, useAppSelector } from "../../../store";
 import {
   IPatchJson,
   IUpdateTeam,
   SettingsStackNavigationProp,
   Team,
 } from "../models";
-import { getGameRegions, getTeamById, loadGameRegions } from "../store";
+import { getTeamById, isRoleExist } from "../store";
 import { theme as coreTheme } from "./../../../core/theme";
 import { resolveImage } from "../../../utils";
 import ActionSheet from "@alessiocancian/react-native-actionsheet";
@@ -36,10 +36,11 @@ import {
   launchCamera,
   launchImageLibrary,
 } from "react-native-image-picker";
-import { setSnackbarMessage } from "../../common/actions";
+import { setSnackbarMessage } from "../../common/store";
 import { modifyTeam, updateTeamsLogo } from "../services";
 import { User } from "../../auth/models";
 import dayjs from "dayjs";
+import { getCurrentUser, getToken } from "../../auth/store";
 
 type Props = {
   navigation: SettingsStackNavigationProp;
@@ -87,20 +88,25 @@ const teamDetailsSchema = yup.object().shape({
 });
 
 const MyTeamsDetails = ({ navigation, route }: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const theme = useTheme();
-  const team: Team = useSelector((state: RootState) =>
-    getTeamById(state.settingsReducer)(route.params.teamId),
+  const team: Team = useAppSelector((state: RootState) =>
+    getTeamById(state, route.params.teamId),
   )!;
-  const user: User = useSelector((state: RootState) => state.authReducer.user)!;
+  const user: User = useAppSelector(getCurrentUser)!;
 
-  const regions = useSelector((state: RootState) =>
-    getGameRegions(state.settingsReducer),
+  // const regions = useSelector((state: RootState) =>
+  //   getGameRegions(state.settingsReducer),
+  // );
+
+  const isO = useAppSelector((state: RootState) =>
+    isRoleExist(state, user.id!, "Team Owner"),
+  );
+  const isSt = useAppSelector((state: RootState) =>
+    isRoleExist(state, user.id!, "Starter"),
   );
 
-  const token: string = useSelector(
-    (state: RootState) => state.authReducer.token,
-  )!;
+  const token: string = useAppSelector(getToken)!;
 
   const logoRef = useRef<ActionSheet>(null);
   const [isOwner, setIsOwner] = useState(false);
@@ -185,50 +191,50 @@ const MyTeamsDetails = ({ navigation, route }: Props) => {
     },
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      let mounted = true;
-      navigation.setOptions({
-        headerTitle: `Edit ${route.params.teamName}`,
-      });
-      if (mounted) {
-        setIsOwner(isTeamOwner());
-        setIsStarter(isStarterPlayer());
-      }
-      // dispatch(loadGameRegions(team.game));
-      return () => {
-        mounted = false;
-      };
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     let mounted = true;
+  //     navigation.setOptions({
+  //       headerTitle: `Edit ${route.params.teamName}`,
+  //     });
+  //     if (mounted) {
+  //       setIsOwner(isTeamOwner());
+  //       setIsStarter(isStarterPlayer());
+  //     }
+  //     // dispatch(loadGameRegions(team.game));
+  //     return () => {
+  //       mounted = false;
+  //     };
+  //   }, []),
+  // );
 
   const hasError = (field: string) => {
     return errors.hasOwnProperty(field);
   };
 
-  const isStarterPlayer = () => {
-    if (team) {
-      const player = team.players.find(item => item.userID === user.id);
-      console.log({ players: team.players });
+  // const isStarterPlayer = () => {
+  //   if (team) {
+  //     const player = team.players.find(item => item.userID === user.id);
+  //     console.log({ players: team.players });
 
-      if (player) {
-        return player.name === "Starter";
-      }
-    }
-    return false;
-  };
+  //     if (player) {
+  //       return player.name === "Starter";
+  //     }
+  //   }
+  //   return false;
+  // };
 
-  const isTeamOwner = () => {
-    if (team) {
-      const player = team.players.find(item => item.userID === user.id);
-      // console.log({ players: team.players });
+  // const isTeamOwner = () => {
+  //   if (team) {
+  //     const player = team.players.find(item => item.userID === user.id);
+  //     // console.log({ players: team.players });
 
-      if (player) {
-        return player.name === "Team Owner";
-      }
-    }
-    return false;
-  };
+  //     if (player) {
+  //       return player.name === "Team Owner";
+  //     }
+  //   }
+  //   return false;
+  // };
 
   const handleUpdateTeamDetails = async (data: IUpdateTeam) => {
     if (isOwner || isStarter) {
@@ -323,7 +329,7 @@ const MyTeamsDetails = ({ navigation, route }: Props) => {
     setLogoLoading(true);
     try {
       const formData = createFormData(image);
-      const response = await updateTeamsLogo(team?.id, formData, token);
+      const response = await updateTeamsLogo(team.id, formData, token);
       // Fetch logo and update in store
       setLogoLoading(false);
       dispatch(setSnackbarMessage("Logo has been updated successfully."));

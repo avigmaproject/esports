@@ -1,5 +1,5 @@
 import React from "react";
-import { Linking, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { TouchableRipple, useTheme } from "react-native-paper";
 import { Block, Text, Button, Logo } from "../../../components";
 import { theme as coreTheme } from "./../../../core/theme";

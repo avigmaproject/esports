@@ -8,21 +8,20 @@ import {
   Alert,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/core";
-import { useDispatch, useSelector } from "react-redux";
 import { Block, Button, EmptyBlockMessage, Text } from "../../../components";
-import { RootState } from "../../../store";
-import { HomeState, League } from "../models";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { League } from "../models";
 import { theme as coreTheme } from "../../../core/theme";
 import { TouchableRipple } from "react-native-paper";
-import { setActiveLeague } from "../store/actions";
+import { getActiveLeague, getAllLeagues, setActiveLeague } from "../store";
+import { setSnackbarMessage } from "../../common/store";
 
 const { width } = Dimensions.get("window");
 
 const SelectLeague = () => {
-  const dispatch = useDispatch();
-  const { activeLeague, leagues }: HomeState = useSelector(
-    (state: RootState) => state.homeReducer,
-  );
+  const dispatch = useAppDispatch();
+  const leagues = useAppSelector(getAllLeagues);
+  const activeLeague = useAppSelector(getActiveLeague);
   const [selectedLeague, setSelectedLeague] = useState<League | null>(
     activeLeague,
   );
@@ -35,6 +34,7 @@ const SelectLeague = () => {
 
   const handleSelectLeague = () => {
     if (selectedLeague) {
+      dispatch(setSnackbarMessage(`${selectedLeague.title} selected.`));
       dispatch(setActiveLeague(selectedLeague));
     } else {
       Alert.alert("Warning", "Please select a league");

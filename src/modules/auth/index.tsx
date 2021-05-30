@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import reducer from "./reducer";
+import reducer from "./store";
 import { AuthState, StackParamList } from "./models";
 
 import WelcomeScreen from "./screens/Welcome";

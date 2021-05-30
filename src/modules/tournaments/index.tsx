@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import PlayersScreen from "./screens/PlayersScreen";
 import { Header } from "../../components";
+import reducers from "./store";
 
 const PlayersStack = createStackNavigator();
 
@@ -18,4 +19,4 @@ const PlayersStackNavigator = () => {
   );
 };
 
-export { PlayersStackNavigator };
+export { reducers, PlayersStackNavigator };

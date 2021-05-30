@@ -28,8 +28,8 @@ import {
   IUsernameExists,
 } from "../models";
 import { checkUsername, register } from "../services/auth";
-import { useDispatch } from "react-redux";
-import { setSnackbarMessage } from "../../common/actions";
+import { useAppDispatch } from "../../../store";
+import { setSnackbarMessage } from "../../common/store";
 
 type Props = {
   navigation: AuthStackNavigationProp;
@@ -84,7 +84,7 @@ const registerSchema = yup.object().shape({
 });
 
 const Login = ({ navigation }: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {
     control,
     formState: { errors },
@@ -109,7 +109,6 @@ const Login = ({ navigation }: Props) => {
     Keyboard.dismiss();
     try {
       setLoading(true);
-
       delete data.confirmPassword;
       const response = await register(data);
       setLoading(false);

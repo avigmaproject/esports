@@ -163,10 +163,11 @@ export interface ProjectTheme {
 export interface SettingsState {
   myTeamsLoading: boolean;
   myTeamsLoaded: boolean;
-  myTeamsError: string | null;
+  myTeamsError: string;
   myTeams: MyTeams;
   myMatches: MyMatches;
-  regions: IRegion[];
+  myMatchesError: string;
+  leaveTeamError: string;
 }
 
 export type StackParamList = {

@@ -1,20 +1,19 @@
 import React from "react";
-import { Alert, Linking, ScrollView, StyleSheet } from "react-native";
+import { Alert, ScrollView, StyleSheet } from "react-native";
 import { useTheme, List, Avatar, Divider } from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import AntDesignIcon from "react-native-vector-icons/AntDesign";
 
 import { Block, Text } from "../../../components";
-import { RootState } from "../../../store";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import { formatDate, openUrl, resolveImage } from "../../../utils";
 import { User } from "../../auth/models";
+import { getCurrentUser, logoutUser } from "../../auth/store";
 
 import {
   SettingsStackNavigationProp,
   StackParamList,
 } from "../models/settings";
-import { logoutUser } from "../../auth/actions";
 import { TERMS_AND_CONDITIONS_URL } from "../../../config";
 
 type Props = {
@@ -23,8 +22,8 @@ type Props = {
 
 const SettingsMenu = ({ navigation }: Props) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const user: User = useSelector((state: RootState) => state.authReducer.user)!;
+  const dispatch = useAppDispatch();
+  const user: User = useAppSelector(getCurrentUser)!;
 
   const navigateToScreen = (screen: keyof StackParamList) => {
     navigation.navigate(screen);

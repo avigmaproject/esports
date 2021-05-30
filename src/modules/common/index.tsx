@@ -2,7 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import NoInternetScreen from "./screens/NoInternetScreen";
 import { CommonState } from "./models";
-import reducer, { appReadySelector } from "./reducer";
+import reducer from "./store";
 import SplashScreen from "./screens/SplashScreen";
 
 const Stack = createStackNavigator();
@@ -38,5 +38,5 @@ const SplashStackNavigator = () => {
   );
 };
 
-export { reducer, StackNavigator, appReadySelector, SplashStackNavigator };
+export { reducer, StackNavigator, SplashStackNavigator };
 export type { CommonState };

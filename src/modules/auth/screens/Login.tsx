@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  Alert,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  Keyboard,
-} from "react-native";
+import { Platform, StyleSheet, TouchableOpacity, Keyboard } from "react-native";
 import { IconButton, TouchableRipple, useTheme } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -24,9 +18,8 @@ import {
 
 import Header from "../components/Header";
 import { login, meDetails } from "../services/auth";
-import { AxiosResponse } from "axios";
-import { useDispatch } from "react-redux";
-import { loginUser, setMeDetails } from "../actions";
+import { useAppDispatch } from "../../../store";
+import { loginUser, setMeDetails } from "../store";
 
 type Props = {
   navigation: AuthStackNavigationProp;
@@ -50,7 +43,7 @@ const Login = ({ navigation }: Props) => {
       password: "123456",
     },
   });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const [isSecureText, setIsSecureText] = useState(true);

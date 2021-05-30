@@ -3,16 +3,12 @@ import "react-native-gesture-handler";
 import { StatusBar } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {
-  Provider as StoreProvider,
-  useDispatch,
-  useSelector,
-} from "react-redux";
-import { PersistGate } from "redux-persist/lib/integration/react";
+import { Provider as StoreProvider } from "react-redux";
+import { PersistGate } from "reduxjs-toolkit-persist/integration/react";
 import SplashScreen from "react-native-splash-screen";
 import { Provider as PaperProvider } from "react-native-paper";
 
-import store, { persistor } from "./store";
+import { store, persistor } from "./store";
 import {
   RootNavigator,
   NoInternetNavigator,
@@ -20,14 +16,15 @@ import {
 } from "./navigation";
 import { theme } from "./core/theme";
 
-import { appReadySelector } from "./modules/common";
-import { resetAppReady } from "./modules/common/actions";
+import { isAppReady, resetAppReady } from "./modules/common/store";
 import { PaperSnackbar } from "./components";
 
+import { useAppDispatch, useAppSelector } from "./store";
+
 const App = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { isConnected } = useNetInfo();
-  const appReady = useSelector(appReadySelector);
+  const appReady = useAppSelector(isAppReady);
 
   useEffect(() => {
     SplashScreen.hide();

@@ -1,3 +1,5 @@
-export * from "./actions";
-export * from "./selectors";
-export * from "./reducer";
+export * from "./settings.slice";
+import reducer from "./settings.slice";
+export default {
+  settings: reducer,
+};

@@ -1,21 +1,23 @@
 import React, { useEffect } from "react";
 import { ImageBackground, StyleSheet } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Block } from "../../../components";
-import { RootState } from "../../../store";
-import { AuthState } from "../../auth";
-import { setAppReady, setSnackbarMessage } from "../actions";
 import { User } from "../../auth/models";
 import { meDetails } from "../../auth/services/auth";
-import { clearStore, loginUser, setMeDetails } from "../../auth/actions";
+import {
+  clearStore,
+  loginUser,
+  setMeDetails,
+  getToken,
+} from "../../auth/store";
+
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { setAppReady, setSnackbarMessage } from "../store";
 
 const SplashScreen = () => {
-  const dispatch = useDispatch();
-  const { token }: AuthState = useSelector(
-    (state: RootState) => state.authReducer,
-  );
+  const dispatch = useAppDispatch();
+  const token: string | null = useAppSelector(getToken);
 
   useEffect(() => {
     let source = axios.CancelToken.source();

@@ -6,15 +6,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IconButton, useTheme } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useDispatch, useSelector } from "react-redux";
 
 import { Block, Button, Text, TextInput } from "../../../components";
 import { IChangePassword, IPatchJson } from "../models";
 import { User } from "../../auth/models";
-import { RootState } from "../../../store";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import { theme as coreTheme } from "./../../../core/theme";
 import { updateUser } from "../services/profile";
-import { setSnackbarMessage } from "../../common/actions";
+import { setSnackbarMessage } from "../../common/store";
+import { getCurrentUser } from "../../auth/store";
 
 const changePasswordSchema = yup.object().shape({
   oldPassword: yup.string().required("Old password is required"),
@@ -26,8 +26,8 @@ const changePasswordSchema = yup.object().shape({
 });
 
 const ChangePassword = () => {
-  const dispatch = useDispatch();
-  const user: User = useSelector((state: RootState) => state.authReducer.user)!;
+  const dispatch = useAppDispatch();
+  const user: User = useAppSelector(getCurrentUser)!;
   const {
     control,
     formState: { errors },

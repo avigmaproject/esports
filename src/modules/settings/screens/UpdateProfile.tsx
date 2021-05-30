@@ -33,16 +33,20 @@ import ImagePicker, {
 import { Block, Button, Text, TextInput, Dropdown } from "../../../components";
 import { IPatchJson, IUpdateProfile } from "../models";
 import { User } from "../../auth/models";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../store";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import { resolveImage } from "../../../utils";
 import { theme as coreTheme } from "./../../../core/theme";
 import { indexedCountries, mapCountries, mapTimezones } from "../constants";
 import { updateLogo, updateUser } from "../services/profile";
-import { setSnackbarMessage } from "../../common/actions";
+import { setSnackbarMessage } from "../../common/store";
 import { meDetails } from "../../auth/services/auth";
-import { logoutUser, setMeDetails } from "../../auth/actions";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  getCurrentUser,
+  getToken,
+  logoutUser,
+  setMeDetails,
+} from "../../auth/store";
 
 DropDownPicker.setTheme("DARK");
 
@@ -60,11 +64,9 @@ const updateSchema = yup.object().shape({
 });
 
 const UpdateProfile = () => {
-  const dispatch = useDispatch();
-  const user: User = useSelector((state: RootState) => state.authReducer.user)!;
-  const token: string = useSelector(
-    (state: RootState) => state.authReducer.token,
-  )!;
+  const dispatch = useAppDispatch();
+  const user: User = useAppSelector(getCurrentUser)!;
+  const token: string = useAppSelector(getToken)!;
 
   const {
     control,

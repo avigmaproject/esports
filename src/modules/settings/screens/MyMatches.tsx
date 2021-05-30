@@ -1,9 +1,8 @@
 import { useFocusEffect } from "@react-navigation/core";
 import React, { useCallback } from "react";
 import { Tabs, TabScreen } from "react-native-paper-tabs";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { setSnackbarMessage } from "../../common/actions";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { setSnackbarMessage } from "../../common/store";
 import { Pending, Scheduled } from "../components";
 import { SettingsStackNavigationProp } from "../models";
 import {
@@ -17,13 +16,9 @@ type Props = {
 };
 
 const MyMatches = ({ navigation }: Props) => {
-  const dispatch = useDispatch();
-  const pendingMatches = useSelector((state: RootState) =>
-    getPendingMatches(state.settingsReducer),
-  );
-  const scheduledMatches = useSelector((state: RootState) =>
-    getScheduledMatches(state.settingsReducer),
-  );
+  const dispatch = useAppDispatch();
+  const pendingMatches = useAppSelector(getPendingMatches);
+  const scheduledMatches = useAppSelector(getScheduledMatches);
   const schTitle = "Scheduled";
   const pendTitle =
     pendingMatches.length > 0

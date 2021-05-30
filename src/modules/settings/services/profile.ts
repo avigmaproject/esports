@@ -48,7 +48,7 @@ export const modifyTeam = async (teamId: string, data: IPatchJson[]) => {
   });
 };
 
-export const leaveTeam = async (team: Team) => {
+export const leaveTeam = async (team: Team): Promise<Team> => {
   return await api().delete(`${TEAMS_PREFIX}/${team.id}`);
 };
 

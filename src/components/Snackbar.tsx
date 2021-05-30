@@ -1,17 +1,16 @@
 import React from "react";
-import { Portal, Snackbar, Button } from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
-import { clearSnackbarMessage } from "../modules/common/actions";
-import { RootState } from "../store";
+import { Portal, Snackbar } from "react-native-paper";
+import { useAppDispatch, useAppSelector } from "../store";
+import {
+  isSnackVisible,
+  getSnackMsg,
+  clearSnackbarMessage,
+} from "../modules/common/store";
 
 const PaperSnackbar = () => {
-  const dispatch = useDispatch();
-  const snackbarVisible = useSelector(
-    (state: RootState) => state.commonReducer.snackbarVisible,
-  );
-  const snackbarMsg = useSelector(
-    (state: RootState) => state.commonReducer.snackbarMsg,
-  );
+  const dispatch = useAppDispatch();
+  const snackbarVisible = useAppSelector(isSnackVisible);
+  const snackbarMsg = useAppSelector(getSnackMsg);
 
   const onDismissSnackBar = () => dispatch(clearSnackbarMessage());
 

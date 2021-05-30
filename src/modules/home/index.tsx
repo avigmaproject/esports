@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { StackParamList } from "./models";
 import Home from "./screens/Home";
-import reducer from "./store/reducer";
+import reducer from "./store";
 import { Header } from "../../components";
 import Details from "./screens/Details";
 import SelectLeague from "./screens/SelectLeague";
