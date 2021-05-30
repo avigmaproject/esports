@@ -22,7 +22,7 @@ export interface Player {
 
 export interface Team {
   id: string;
-  game?: string;
+  game: string;
   name: string;
   logo: string;
   regionID: string;

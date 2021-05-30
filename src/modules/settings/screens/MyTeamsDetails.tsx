@@ -27,7 +27,7 @@ import {
   SettingsStackNavigationProp,
   Team,
 } from "../models";
-import { getTeamById, isRoleExist } from "../store";
+import { getTeamById, getTeamPlayerByUserId, isRoleExist } from "../store";
 import { theme as coreTheme } from "./../../../core/theme";
 import { resolveImage } from "../../../utils";
 import ActionSheet from "@alessiocancian/react-native-actionsheet";
@@ -41,6 +41,7 @@ import { modifyTeam, updateTeamsLogo } from "../services";
 import { User } from "../../auth/models";
 import dayjs from "dayjs";
 import { getCurrentUser, getToken } from "../../auth/store";
+import { getLeagueRegions, loadRegionsByLeague } from "../../tournaments/store";
 
 type Props = {
   navigation: SettingsStackNavigationProp;
@@ -93,24 +94,21 @@ const MyTeamsDetails = ({ navigation, route }: Props) => {
   const team: Team = useAppSelector((state: RootState) =>
     getTeamById(state, route.params.teamId),
   )!;
+
   const user: User = useAppSelector(getCurrentUser)!;
+  const regions = useAppSelector(getLeagueRegions);
 
-  // const regions = useSelector((state: RootState) =>
-  //   getGameRegions(state.settingsReducer),
-  // );
-
-  const isO = useAppSelector((state: RootState) =>
-    isRoleExist(state, user.id!, "Team Owner"),
+  const isOwner = useAppSelector((state: RootState) =>
+    isRoleExist(state, route.params.teamId, user.id!, "Team Owner"),
   );
-  const isSt = useAppSelector((state: RootState) =>
-    isRoleExist(state, user.id!, "Starter"),
+
+  const isStarter = useAppSelector((state: RootState) =>
+    isRoleExist(state, route.params.teamId, user.id!, "Starter"),
   );
 
   const token: string = useAppSelector(getToken)!;
 
   const logoRef = useRef<ActionSheet>(null);
-  const [isOwner, setIsOwner] = useState(false);
-  const [isStarter, setIsStarter] = useState(false);
   const [loading, setLoading] = useState(false);
   const [logoLoading, setLogoLoading] = useState(false);
   const [wdaysStartVisible, setWDaysStartVisible] = useState(false);
@@ -191,50 +189,26 @@ const MyTeamsDetails = ({ navigation, route }: Props) => {
     },
   });
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     let mounted = true;
-  //     navigation.setOptions({
-  //       headerTitle: `Edit ${route.params.teamName}`,
-  //     });
-  //     if (mounted) {
-  //       setIsOwner(isTeamOwner());
-  //       setIsStarter(isStarterPlayer());
-  //     }
-  //     // dispatch(loadGameRegions(team.game));
-  //     return () => {
-  //       mounted = false;
-  //     };
-  //   }, []),
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      navigation.setOptions({
+        headerTitle: `Edit ${route.params.teamName}`,
+      });
+
+      if (team) {
+        dispatch(loadRegionsByLeague(team.game));
+      }
+
+      return () => {
+        mounted = false;
+      };
+    }, []),
+  );
 
   const hasError = (field: string) => {
     return errors.hasOwnProperty(field);
   };
-
-  // const isStarterPlayer = () => {
-  //   if (team) {
-  //     const player = team.players.find(item => item.userID === user.id);
-  //     console.log({ players: team.players });
-
-  //     if (player) {
-  //       return player.name === "Starter";
-  //     }
-  //   }
-  //   return false;
-  // };
-
-  // const isTeamOwner = () => {
-  //   if (team) {
-  //     const player = team.players.find(item => item.userID === user.id);
-  //     // console.log({ players: team.players });
-
-  //     if (player) {
-  //       return player.name === "Team Owner";
-  //     }
-  //   }
-  //   return false;
-  // };
 
   const handleUpdateTeamDetails = async (data: IUpdateTeam) => {
     if (isOwner || isStarter) {

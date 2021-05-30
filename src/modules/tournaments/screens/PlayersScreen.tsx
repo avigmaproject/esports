@@ -1,8 +1,6 @@
 import React, { useCallback } from "react";
-
 import Icon from "react-native-vector-icons/Feather";
 import { Tabs, TabScreen } from "react-native-paper-tabs";
-import { useDispatch, useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/core";
 
 import { Block, Text } from "../../../components";
@@ -13,17 +11,16 @@ import {
   Casters,
 } from "./../components/players";
 import * as fromActions from "../store";
-import { RootState } from "../../../store";
+import { RootState, useAppDispatch, useAppSelector } from "../../../store";
 import { League } from "../../home/models";
+import { getActiveLeague } from "../../home/store";
 
 const PlayersScreen = () => {
-  const dispatch = useDispatch();
-  const activeLeague: League = useSelector(
-    (state: RootState) => state.homeReducer.activeLeague,
-  )!;
+  const dispatch = useAppDispatch();
+  const activeLeague: League = useAppSelector(getActiveLeague)!;
   useFocusEffect(
     useCallback(() => {
-      dispatch(fromActions.getPlayers(activeLeague.key));
+      // dispatch(fromActions.getPlayers(activeLeague.key));
       return () => {};
     }, [activeLeague]),
   );

@@ -4,7 +4,7 @@ import { StatusBar } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as StoreProvider } from "react-redux";
-import { PersistGate } from "reduxjs-toolkit-persist/integration/react";
+import { PersistGate } from "redux-persist/integration/react";
 import SplashScreen from "react-native-splash-screen";
 import { Provider as PaperProvider } from "react-native-paper";
 

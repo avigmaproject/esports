@@ -136,18 +136,30 @@ export const getTeamById = createSelector(
 
 export const isRoleExist = createSelector(
   getTeamById,
-  (_: RootState, userId: string, role: string) => [userId, role],
+  (_: RootState, teamId: string, userId: string, role: string) => [
+    teamId,
+    userId,
+    role,
+  ],
   (team, data) => {
     if (team) {
       if (!team.players) {
         return false;
       }
-      return team.players.some(
-        player => player.id === data[0] && player.name === data[1],
+      return (
+        team.players.filter(
+          player => player.userID === data[1] && player.role === data[2],
+        ).length > 0
       );
     }
     return false;
   },
+);
+
+export const getTeamPlayerByUserId = createSelector(
+  getTeamById,
+  (_: RootState, teamId: string, userId: string) => [teamId, userId],
+  (team, data) => team?.players?.find(item => item.userID === data[1]),
 );
 
 export const getMyMatches = (state: RootState) => state.settings.myMatches;

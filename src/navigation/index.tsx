@@ -4,9 +4,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useSelector } from "react-redux";
 
-import { StackNavigator as AuthNavigator, AuthState } from "../modules/auth";
+import { StackNavigator as AuthNavigator } from "../modules/auth";
 import { StackNavigator as SettingsNavigator } from "../modules/settings";
 import {
   SplashStackNavigator,
@@ -17,11 +16,13 @@ import {
   StackNavigator as HomeNavigator,
 } from "../modules/home";
 import { PlayersStackNavigator } from "../modules/tournaments";
-import { RootState } from "../store";
+import { useAppSelector } from "../store";
 import { CombinedDarkTheme } from "./../core/theme";
 import { DrawerContent, TabBar, TabBarIcon } from "../components";
 import { Image } from "react-native";
-import { HomeState } from "../modules/home/models";
+import { getCurrentUser } from "../modules/auth/store";
+import { User } from "../modules/auth/models";
+import { getActiveLeague } from "../modules/home/store";
 
 const MaterialBottomTab = createMaterialBottomTabNavigator();
 const AuthenticatedDrawer = createDrawerNavigator();
@@ -131,9 +132,7 @@ const MaterialBottomTabNavigator = () => {
 
 const AuthenticatedDrawerNavigator = () => {
   const { Navigator, Screen } = AuthenticatedDrawer;
-  const { activeLeague }: HomeState = useSelector(
-    (state: RootState) => state.homeReducer,
-  );
+  const activeLeague = useAppSelector(getActiveLeague);
 
   if (!activeLeague) {
     return <SelectLeagueNavigator />;
@@ -147,12 +146,10 @@ const AuthenticatedDrawerNavigator = () => {
 };
 
 export const RootNavigator = () => {
-  const authState: AuthState = useSelector(
-    (state: RootState) => state.authReducer,
-  );
+  const user: User | null = useAppSelector(getCurrentUser);
   return (
     <NavigationContainer theme={CombinedDarkTheme}>
-      {authState.user ? <AuthenticatedDrawerNavigator /> : <AuthNavigator />}
+      {user ? <AuthenticatedDrawerNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };
