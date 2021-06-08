@@ -5,6 +5,10 @@ export type StackParamList = {
   DetailPage: undefined;
 };
 
+export type SelectLeagueParamList = {
+  SelectLeague: undefined;
+};
+
 export interface League {
   title: string;
   key: string;
@@ -17,3 +21,4 @@ export interface HomeState {
 }
 
 export type HomeStackNavigationProp = StackNavigationProp<StackParamList>;
+export type SelectLeagueStackNavigationProp = StackNavigationProp<SelectLeagueParamList>;

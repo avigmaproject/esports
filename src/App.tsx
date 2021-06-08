@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import "react-native-gesture-handler";
 import { StatusBar } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -20,6 +19,7 @@ import { isAppReady, resetAppReady } from "./modules/common/store";
 import { PaperSnackbar } from "./components";
 
 import { useAppDispatch, useAppSelector } from "./store";
+import { Loader } from "./modules/common/components";
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -34,6 +34,7 @@ const App = () => {
   return (
     <PaperProvider theme={theme}>
       <StatusBar barStyle="light-content" />
+      <Loader />
       <SafeAreaProvider>
         {!appReady ? (
           <SplashScreenNavigator />

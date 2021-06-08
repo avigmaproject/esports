@@ -3,7 +3,7 @@ import { Block, Text } from "../../../../components";
 
 const Connoissueurs = () => {
   return (
-    <Block>
+    <Block center middle>
       <Text>Connoissueurs</Text>
     </Block>
   );

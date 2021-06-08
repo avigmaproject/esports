@@ -2,8 +2,16 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import Icon from "react-native-vector-icons/Feather";
-import { StackHeaderProps } from "@react-navigation/stack";
+import { DefaultNavigatorOptions } from "@react-navigation/core";
+import {
+  StackHeaderProps,
+  StackNavigationOptions,
+} from "@react-navigation/stack";
 import { DrawerActions } from "@react-navigation/routers";
+
+type ScreenOptions = {
+  subtitle?: string;
+};
 
 type Props = StackHeaderProps & {
   hideBackBtn?: boolean;
@@ -50,7 +58,11 @@ const Header = ({
         borderBottomWidth: 1,
       }}>
       {renderBackAction()}
-      <Appbar.Content title={title} titleStyle={styles.titleStyle} />
+      <Appbar.Content
+        title={title}
+        // subtitle="Ladder"
+        titleStyle={styles.titleStyle}
+      />
       {options.headerRight && options.headerRight({ tintColor: "red" })}
     </Appbar.Header>
   );

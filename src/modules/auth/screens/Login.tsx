@@ -39,8 +39,8 @@ const Login = ({ navigation }: Props) => {
   } = useForm<ILogin>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      username: "avigmadev",
-      password: "123456",
+      username: "",
+      password: "",
     },
   });
   const dispatch = useAppDispatch();

@@ -1,15 +1,36 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
-import { useTheme, Drawer, Text } from "react-native-paper";
+import { useTheme, Drawer } from "react-native-paper";
 
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
 import { theme } from "./../core/theme";
 import Block from "./Block";
+import { useAppDispatch, useAppSelector } from "../store";
+import { getActiveLeague } from "../modules/home/store";
+import { logoutUser } from "../modules/auth/store";
 
 const DrawerContent = (props: any) => {
   const paperTheme = useTheme();
+  const dispatch = useAppDispatch();
+  const activeLeague = useAppSelector(getActiveLeague);
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Logout",
+          onPress: () => dispatch(logoutUser()),
+        },
+        { text: "Cancel" },
+      ],
+      { cancelable: false },
+    );
+  };
+
   return (
     <DrawerContentScrollView
       {...props}
@@ -19,37 +40,52 @@ const DrawerContent = (props: any) => {
       }}>
       <Block style={styles.drawerContent}>
         <Drawer.Section style={styles.drawerSection}>
-          <Block center paddingVertical={8} color={theme.colors.background}>
-            <Text>Onward League</Text>
-          </Block>
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
-            label="Home"
-            onPress={() => {}}
+            label={
+              activeLeague ? `${activeLeague.title} League` : "Select League"
+            }
+            onPress={() => props.navigation.navigate("SelectLeague")}
           />
+          {/* 
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
             label="Teams"
             onPress={() => {}}
+            />*/}
+          <DrawerItem
+            icon={({ color, size }) => (
+              <SimpleLineIcons name="check" color={color} size={size} />
+            )}
+            label="Home"
+            onPress={() =>
+              props.navigation.navigate("Home", { screen: "Home" })
+            }
           />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
             label="Standings"
-            onPress={() => {}}
+            onPress={() =>
+              props.navigation.navigate("Home", { screen: "Standings" })
+            }
           />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
             label="Matches"
-            onPress={() => {}}
+            onPress={() =>
+              props.navigation.navigate("Home", { screen: "Tournaments" })
+            }
           />
+
+          {/* 
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
@@ -98,13 +134,13 @@ const DrawerContent = (props: any) => {
             )}
             label="Contact Us"
             onPress={() => {}}
-          />
+          /> */}
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
             label="Logout"
-            onPress={() => {}}
+            onPress={handleLogout}
           />
         </Drawer.Section>
       </Block>

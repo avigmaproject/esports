@@ -7,9 +7,11 @@ import reducer from "./store";
 import { Header } from "../../components";
 import Details from "./screens/Details";
 import SelectLeague from "./screens/SelectLeague";
+import SelectLeagueHome from "./screens/SelectLeagueHome";
 
 const HomeStack = createStackNavigator<StackParamList>();
 const SelectLeagueStack = createStackNavigator();
+const SelectLeagueHomeStack = createStackNavigator();
 
 const StackNavigator = () => {
   const { Navigator, Screen } = HomeStack;
@@ -42,4 +44,25 @@ const SelectLeagueNavigator = () => {
   );
 };
 
-export { reducer, StackNavigator, SelectLeagueNavigator };
+const SelectLeagueHomeNavigator = () => {
+  const { Navigator, Screen } = SelectLeagueHomeStack;
+  return (
+    <Navigator
+      screenOptions={{
+        header: props => <Header {...props} />,
+      }}>
+      <Screen
+        name="SelectLeague"
+        component={SelectLeagueHome}
+        options={{ headerTitle: "Select League" }}
+      />
+    </Navigator>
+  );
+};
+
+export {
+  reducer,
+  StackNavigator,
+  SelectLeagueNavigator,
+  SelectLeagueHomeNavigator,
+};

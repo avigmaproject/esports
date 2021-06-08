@@ -50,7 +50,7 @@ const ForgotPassword = ({ navigation }: Props) => {
       setLoading(false);
       navigation.goBack();
     } catch (error) {
-      console.log(error.response.data);
+      // console.log(error.response.data);
 
       let message = "";
       if (error.response) {

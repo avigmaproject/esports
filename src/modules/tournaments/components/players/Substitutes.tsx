@@ -3,7 +3,7 @@ import { Block, Text } from "../../../../components";
 
 const Substitutes = () => {
   return (
-    <Block>
+    <Block center middle>
       <Text>Substitutes</Text>
     </Block>
   );

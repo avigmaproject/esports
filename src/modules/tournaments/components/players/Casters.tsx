@@ -3,7 +3,7 @@ import { Block, Text } from "../../../../components";
 
 const Casters = () => {
   return (
-    <Block>
+    <Block center middle>
       <Text>Casters</Text>
     </Block>
   );

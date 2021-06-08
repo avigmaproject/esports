@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Icon from "react-native-vector-icons/Feather";
 
 import { StackNavigator as AuthNavigator } from "../modules/auth";
 import { StackNavigator as SettingsNavigator } from "../modules/settings";
@@ -12,10 +13,15 @@ import {
   StackNavigator as NoInternetStackNavigator,
 } from "../modules/common";
 import {
+  SelectLeagueHomeNavigator,
   SelectLeagueNavigator,
   StackNavigator as HomeNavigator,
 } from "../modules/home";
-import { PlayersStackNavigator } from "../modules/tournaments";
+import {
+  PlayersStackNavigator,
+  StandingsStackNavigator,
+  MatchesStackNavigator,
+} from "../modules/tournaments";
 import { useAppSelector } from "../store";
 import { CombinedDarkTheme } from "./../core/theme";
 import { DrawerContent, TabBar, TabBarIcon } from "../components";
@@ -30,11 +36,28 @@ const BottomTabbar = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
   const { Navigator, Screen } = BottomTabbar;
+  const theme = useTheme();
   return (
     <Navigator>
       <Screen
-        name="Standings"
+        name="Home"
         component={HomeNavigator}
+        options={{
+          title: "Home",
+          tabBarIcon: ({ focused }) => {
+            return (
+              <Icon
+                name="home"
+                color={focused ? theme.colors.primary : "#fafafa"}
+                size={20}
+              />
+            );
+          },
+        }}
+      />
+      <Screen
+        name="Standings"
+        component={StandingsStackNavigator}
         options={{
           title: "Standings",
           tabBarIcon: ({ focused }) => {
@@ -48,7 +71,7 @@ const BottomTabNavigator = () => {
       />
       <Screen
         name="Tournaments"
-        component={HomeNavigator}
+        component={MatchesStackNavigator}
         options={{
           title: "Matches",
           tabBarIcon: ({ focused }) => {
@@ -138,8 +161,13 @@ const AuthenticatedDrawerNavigator = () => {
     return <SelectLeagueNavigator />;
   } else {
     return (
-      <Navigator drawerContent={() => <DrawerContent />}>
+      <Navigator drawerContent={props => <DrawerContent {...props} />}>
         <Screen name="Home" component={BottomTabNavigator} />
+        <Screen
+          name="SelectLeague"
+          component={SelectLeagueHomeNavigator}
+          options={{}}
+        />
       </Navigator>
     );
   }

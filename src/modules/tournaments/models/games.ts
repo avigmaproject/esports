@@ -30,7 +30,7 @@ export interface BaseTeam {
   logo: string;
   regionID: string;
   region: string;
-  rank?: number;
+  rank: number;
   rankWorldwide?: number;
 }
 
@@ -66,7 +66,7 @@ export interface BaseMatch {
 // Upcoming Match
 export interface Match extends BaseMatch {
   homeBetCount: number;
-  awayBeyCount: number;
+  awayBetCount: number;
   castUpvotes: number;
   currentUserVotedTeamID?: string;
   currentUserUpvotedCast?: boolean;
@@ -162,4 +162,39 @@ export interface TeamMatchHistory {
 export interface CreateTeam {
   name: string;
   region: string;
+}
+
+export interface MatchRequest {
+  league: string;
+  region?: string;
+  posMin?: number;
+}
+
+export interface StandingRequest {
+  league: string;
+  region?: string;
+  rankMin?: number;
+}
+
+export interface TeamDetPlayers {
+  id: string;
+  game: string;
+  name: string;
+  logo: string;
+  regionID: string;
+  region: string;
+  active: boolean;
+  retired: boolean;
+  players: Player[];
+}
+
+export interface Player {
+  id: string;
+  userID: string;
+  name: string;
+  logo: string;
+  country: string;
+  nationality: string;
+  roleID: string;
+  role: string;
 }

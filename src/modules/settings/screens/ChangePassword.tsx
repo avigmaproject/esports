@@ -71,7 +71,7 @@ const ChangePassword = () => {
       });
       dispatch(setSnackbarMessage("Password has been changed successfully."));
     } catch (error) {
-      console.log(error.response);
+      // console.log(error.response);
       setLoading(false);
       dispatch(
         setSnackbarMessage("Unable to update password. Please try again."),

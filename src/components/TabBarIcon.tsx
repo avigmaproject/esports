@@ -11,7 +11,7 @@ const TabBarIcon = ({ name, focused }: Props) => {
   if (focused) {
     image = `../../assets/tab-bar/active/${name}.png`;
   }
-  console.log({ image });
+  //({ image });
 
   // return <Image source={require(image)} style={{ width: 24, height: 24 }} />;
 };

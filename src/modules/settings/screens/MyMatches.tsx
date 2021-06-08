@@ -39,7 +39,7 @@ const MyMatches = ({ navigation }: Props) => {
       dispatch(
         setSnackbarMessage("An error occurered while processing your request."),
       );
-      console.log({ error });
+      // console.log({ error });
     }
   };
 
