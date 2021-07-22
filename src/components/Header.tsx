@@ -1,21 +1,20 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Appbar, useTheme } from "react-native-paper";
+import { Appbar, useTheme, ActivityIndicator } from "react-native-paper";
 import Icon from "react-native-vector-icons/Feather";
-import { DefaultNavigatorOptions } from "@react-navigation/core";
-import {
-  StackHeaderProps,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+import { StackHeaderProps } from "@react-navigation/stack";
 import { DrawerActions } from "@react-navigation/routers";
-
-type ScreenOptions = {
-  subtitle?: string;
-};
+import { useNetInfo } from "@react-native-community/netinfo";
+import Block from "./Block";
+import Text from "./Text";
 
 type Props = StackHeaderProps & {
   hideBackBtn?: boolean;
   hideDrawerToggle?: boolean;
+};
+
+const MenuInon = (props: any) => {
+  return <Icon name="menu" {...props} />;
 };
 
 const Header = ({
@@ -26,6 +25,7 @@ const Header = ({
   hideDrawerToggle,
 }: Props) => {
   const theme = useTheme();
+  const { isConnected } = useNetInfo();
   const { options } = scene.descriptor;
   const title =
     options.headerTitle !== undefined
@@ -43,7 +43,7 @@ const Header = ({
     }
     return (
       <Appbar.Action
-        icon={props => <Icon name="menu" {...props} />}
+        icon={MenuInon}
         size={28}
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
       />
@@ -59,8 +59,19 @@ const Header = ({
       }}>
       {renderBackAction()}
       <Appbar.Content
-        title={title}
-        // subtitle="Ladder"
+        title={
+          isConnected ? (
+            title
+          ) : (
+            <Block row middle center>
+              <ActivityIndicator size={15} />
+              <Text subtitle white marginLeft={10}>
+                waiting for network...
+              </Text>
+            </Block>
+          )
+        }
+        // subtitle={headerSubTitle}
         titleStyle={styles.titleStyle}
       />
       {options.headerRight && options.headerRight({ tintColor: "red" })}

@@ -56,7 +56,8 @@ const Teams = ({ items, onEdit, onRemove }: Props) => {
           row
           style={{ borderWidth: 1, borderColor: "#fff" }}
           paddingVertical={10}
-          paddingHorizontal={10}>
+          paddingHorizontal={10}
+          marginBottom={10}>
           <Block noflex middle center marginRight={10}>
             <Image
               source={{ uri: resolveImage(item.logo) }}

@@ -1,84 +1,98 @@
 import React from "react";
 import { FlatList, StyleSheet, Image } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import { DataTable, Divider } from "react-native-paper";
+import { Card, DataTable, Divider, TouchableRipple } from "react-native-paper";
 import { Block, EmptyBlockMessage, Text } from "../../../../components";
 import { formatDate, openUrl, resolveImage } from "../../../../utils";
 import * as fromModels from "../../models";
 
 type Props = {
   matches: fromModels.MatchHistory[];
+  goToMatchDetails?: (match: fromModels.BaseMatch) => void;
+  goToTeamDetails?: (team: fromModels.BaseTeam) => void;
 };
 
-const TeamMatchHistory = ({ matches }: Props) => {
+const TeamMatchHistory = ({
+  matches,
+  goToMatchDetails,
+  goToTeamDetails,
+}: Props) => {
   const renderItem = (item: fromModels.MatchHistory) => {
     return (
-      <Block
-        flex
-        row
-        padding={10}
-        marginBottom={10}
-        style={{
-          borderWidth: 1,
-          borderColor: "#cacaca",
-        }}>
-        <Block center>
-          <Image
-            source={{ uri: resolveImage(item.homeTeam.logo) }}
-            style={styles.image}
-          />
-          <Text primary subtitle center>
-            {item.awayTeam.name}
-          </Text>
-        </Block>
-        <Block noflex marginHorizontal={25} center middle>
-          <Block row noflex center marginBottom={10}>
-            {item.homeTeam.id === item.winningTeamID ? (
-              <Icon name="arrow-up" color={"green"} size={20} />
-            ) : (
-              <Icon name="arrow-down" color={"red"} size={20} />
-            )}
-            <Block row noflex>
-              <Text>{item.homeScore}</Text>
-              <Text>{" - "}</Text>
-              <Text>{item.awayScore}</Text>
+      <Card
+        style={{ marginBottom: 10 }}
+        onPress={() => goToMatchDetails && goToMatchDetails(item)}>
+        <Card.Content>
+          <Block flex row>
+            <Block center>
+              <TouchableRipple
+                onPress={() =>
+                  goToTeamDetails && goToTeamDetails(item.homeTeam)
+                }>
+                <Image
+                  source={{ uri: resolveImage(item.homeTeam.logo) }}
+                  style={styles.image}
+                />
+              </TouchableRipple>
+              <Text primary subtitle center>
+                {item.awayTeam.name}
+              </Text>
             </Block>
-            {item.awayTeam.id === item.winningTeamID ? (
-              <Icon name="arrow-up" color={"green"} size={20} />
-            ) : (
-              <Icon name="arrow-down" color={"red"} size={20} />
-            )}
-          </Block>
-          <Block noflex center>
-            <Text subtitle bold>
-              {formatDate(item.dateScheduled, "DD MMM, YYYY")}
-            </Text>
-            <Text subtitle>at</Text>
-            <Text subtitle bold>
-              {formatDate(item.dateScheduled, "hh:mm A")}
-            </Text>
-          </Block>
-          {item.vodURL && (
-            <Block center marginTop={10}>
-              <Icon
-                name="eye"
-                size={15}
-                color="#fafafa"
-                onPress={() => openUrl(item.vodURL!)}
-              />
+            <Block noflex marginHorizontal={25} center middle>
+              <Block row noflex center marginBottom={10}>
+                {item.homeTeam.id === item.winningTeamID ? (
+                  <Icon name="arrow-up" color={"green"} size={20} />
+                ) : (
+                  <Icon name="arrow-down" color={"red"} size={20} />
+                )}
+                <Block row noflex>
+                  <Text>{item.homeScore}</Text>
+                  <Text>{" - "}</Text>
+                  <Text>{item.awayScore}</Text>
+                </Block>
+                {item.awayTeam.id === item.winningTeamID ? (
+                  <Icon name="arrow-up" color={"green"} size={20} />
+                ) : (
+                  <Icon name="arrow-down" color={"red"} size={20} />
+                )}
+              </Block>
+              <Block noflex center>
+                <Text subtitle bold>
+                  {formatDate(item.dateScheduled, "DD MMM, YYYY")}
+                </Text>
+                <Text subtitle>at</Text>
+                <Text subtitle bold>
+                  {formatDate(item.dateScheduled, "hh:mm A")}
+                </Text>
+              </Block>
+              {item.vodURL && (
+                <Block center marginTop={10}>
+                  <Icon
+                    name="eye"
+                    size={15}
+                    color="#fafafa"
+                    onPress={() => openUrl(item.vodURL!)}
+                  />
+                </Block>
+              )}
             </Block>
-          )}
-        </Block>
-        <Block center>
-          <Image
-            source={{ uri: resolveImage(item.awayTeam.logo) }}
-            style={styles.image}
-          />
-          <Text primary subtitle center>
-            {item.awayTeam.name}
-          </Text>
-        </Block>
-      </Block>
+            <Block center>
+              <TouchableRipple
+                onPress={() =>
+                  goToTeamDetails && goToTeamDetails(item.awayTeam)
+                }>
+                <Image
+                  source={{ uri: resolveImage(item.awayTeam.logo) }}
+                  style={styles.image}
+                />
+              </TouchableRipple>
+              <Text primary subtitle center>
+                {item.awayTeam.name}
+              </Text>
+            </Block>
+          </Block>
+        </Card.Content>
+      </Card>
     );
   };
 

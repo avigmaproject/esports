@@ -6,6 +6,7 @@ export const initialState: CommonState = {
   appReady: false,
   snackbarVisible: false,
   snackbarMsg: "",
+  headerSubTitle: null,
 };
 
 export const commonSlice = createSlice({
@@ -26,6 +27,12 @@ export const commonSlice = createSlice({
       state.snackbarMsg = "";
       state.snackbarVisible = false;
     },
+    setHeaderSubTitle: (state, action: PayloadAction<string>) => {
+      state.headerSubTitle = action.payload;
+    },
+    clearHeaderSubTitle: state => {
+      state.headerSubTitle = null;
+    },
   },
 });
 
@@ -34,6 +41,8 @@ export const {
   resetAppReady,
   setSnackbarMessage,
   clearSnackbarMessage,
+  setHeaderSubTitle,
+  clearHeaderSubTitle,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;
@@ -43,3 +52,5 @@ export const isAppReady = (state: RootState) => state.common.appReady;
 export const isSnackVisible = (state: RootState) =>
   state.common.snackbarVisible;
 export const getSnackMsg = (state: RootState) => state.common.snackbarMsg;
+export const getHeaderSubTitle = (state: RootState) =>
+  state.common.headerSubTitle;

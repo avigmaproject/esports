@@ -49,7 +49,12 @@ const Dropdown = ({
       zIndex={zIndex}
       zIndexInverse={zIndexReverse}
       style={styles.dropdown}
-      scrollViewProps={{ nestedScrollEnabled: true, persistentScrollbar: true }}
+      scrollViewProps={{
+        nestedScrollEnabled: true,
+        persistentScrollbar: true,
+        keyboardDismissMode: "on-drag",
+        keyboardShouldPersistTaps: "handled",
+      }}
       placeholder={placeholder}
       searchTextInputStyle={{
         borderRadius: 0,
@@ -58,6 +63,9 @@ const Dropdown = ({
       }}
       placeholderStyle={{
         color: theme.colors.text,
+      }}
+      modalContentContainerStyle={{
+        marginTop: 60,
       }}
     />
   );

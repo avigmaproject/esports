@@ -357,7 +357,7 @@ const UpdateProfile = () => {
                       searchable={true}
                       zIndex={3000}
                       placeholder={pl}
-                      listMode={Platform.OS === "ios" ? "FLATLIST" : "MODAL"}
+                      listMode={"MODAL"}
                     />
                   );
                 }}
@@ -397,7 +397,7 @@ const UpdateProfile = () => {
                       searchable={true}
                       zIndex={2000}
                       placeholder={pl}
-                      listMode={Platform.OS === "ios" ? "FLATLIST" : "MODAL"}
+                      listMode={"MODAL"}
                     />
                   );
                 }}
@@ -432,7 +432,7 @@ const UpdateProfile = () => {
                       searchable={true}
                       zIndex={1000}
                       placeholder={pl}
-                      listMode={Platform.OS === "ios" ? "FLATLIST" : "MODAL"}
+                      listMode={"MODAL"}
                     />
                   );
                 }}

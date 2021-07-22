@@ -30,6 +30,7 @@ import {
 import { checkUsername, register } from "../services/auth";
 import { useAppDispatch } from "../../../store";
 import { setSnackbarMessage } from "../../common/store";
+import { useToast } from "react-native-paper-toast";
 
 type Props = {
   navigation: AuthStackNavigationProp;
@@ -97,6 +98,7 @@ const Login = ({ navigation }: Props) => {
   });
 
   const theme = useTheme();
+  const toaster = useToast();
 
   const [loading, setLoading] = useState(false);
   const [usernameLoading, setUsernameLoading] = useState(false);
@@ -125,7 +127,12 @@ const Login = ({ navigation }: Props) => {
           data: { Message },
         } = error.response;
         if (Message) {
-          setErrorForm("username", { message: Message });
+          toaster.show({
+            message: Message,
+            type: "error",
+            duration: 5000,
+            position: "top",
+          });
         } else {
           message = "An error occurred while processing your request.";
         }
@@ -136,7 +143,12 @@ const Login = ({ navigation }: Props) => {
       }
 
       if (message) {
-        setErrorForm("username", { message: message });
+        toaster.show({
+          message: message,
+          type: "error",
+          duration: 5000,
+          position: "top",
+        });
       }
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 import { useFocusEffect } from "@react-navigation/core";
 import React, { useCallback } from "react";
-import { SafeAreaView, ScrollView } from "react-native";
-import { useTheme } from "react-native-paper";
+import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import { useTheme, DataTable } from "react-native-paper";
 import { Block, Text } from "../../../components";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import * as fromModels from "../models";
@@ -25,6 +25,41 @@ import {
 type Props = {
   navigation: fromModels.StandingsStackNavigationProp;
   route: fromModels.TeamDetailsRouteProp;
+};
+
+type TeamStatsProps = {
+  details: fromModels.Team;
+};
+
+const TeamStats = ({ details }: TeamStatsProps) => {
+  return (
+    <Block>
+      <Block noflex center marginBottom={10}>
+        <Text title primary>
+          Stats of Current Season
+        </Text>
+      </Block>
+      <DataTable>
+        <DataTable.Header>
+          <DataTable.Title style={styles.title}>GP</DataTable.Title>
+          <DataTable.Title style={styles.title}>WIN</DataTable.Title>
+          <DataTable.Title style={styles.title}>LOSS</DataTable.Title>
+          <DataTable.Title style={styles.title}>PTS</DataTable.Title>
+          <DataTable.Title style={styles.title}>WIN %</DataTable.Title>
+        </DataTable.Header>
+
+        <DataTable.Row>
+          <DataTable.Cell style={styles.cell}>{details.gp}</DataTable.Cell>
+          <DataTable.Cell style={styles.cell}>{details.w}</DataTable.Cell>
+          <DataTable.Cell style={styles.cell}>{details.l}</DataTable.Cell>
+          <DataTable.Cell style={styles.cell}>{details.pts}</DataTable.Cell>
+          <DataTable.Cell style={styles.cell}>
+            {(details.w / details.gp) * 100}
+          </DataTable.Cell>
+        </DataTable.Row>
+      </DataTable>
+    </Block>
+  );
 };
 
 const TeamDetails = ({ navigation, route }: Props) => {
@@ -58,16 +93,29 @@ const TeamDetails = ({ navigation, route }: Props) => {
     }, [teamId, teamName]),
   );
 
+  const redirectToPlayerDetails = (player: fromModels.Player) => {
+    navigation.navigate("PlayerDetails", {
+      playerId: player.id,
+      playerName: player.name,
+    });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         <Block>
           {teamDetails && <BasicDetails details={teamDetails} />}
-          <Players players={players} />
+          {teamDetails && <TeamStats details={teamDetails} />}
+          <Players
+            players={players}
+            handlePlayerRedirect={redirectToPlayerDetails}
+          />
           <TeamUpcomingMatches matches={upcomingMatches} />
           <Block noflex margin={10}>
             <Block noflex center marginBottom={10}>
-              <Text title>Past Matches</Text>
+              <Text title primary>
+                Past Matches
+              </Text>
             </Block>
             <TeamMatchHistory matches={matchesHistories} />
           </Block>
@@ -78,3 +126,12 @@ const TeamDetails = ({ navigation, route }: Props) => {
 };
 
 export default TeamDetails;
+
+const styles = StyleSheet.create({
+  cell: {
+    justifyContent: "center",
+  },
+  title: {
+    justifyContent: "center",
+  },
+});

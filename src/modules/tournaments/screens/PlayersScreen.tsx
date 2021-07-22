@@ -10,35 +10,78 @@ import {
   Substitutes,
   Casters,
 } from "./../components/players";
-import * as fromActions from "../store";
-import { RootState, useAppDispatch, useAppSelector } from "../../../store";
-import { League } from "../../home/models";
-import { getActiveLeague } from "../../home/store";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { getActiveLeague } from "../../tournaments/store";
+import {
+  getCasters,
+  getPlayers,
+  getPlayerScreenLoading,
+  loadCastersByLeague,
+  loadPlayersByLeague,
+} from "../store";
+import * as fromModels from "../models";
 
-const PlayersScreen = () => {
+type Props = {
+  navigation: fromModels.PlayersStackNavigatorProp;
+};
+
+const PlayersScreen = ({ navigation }: Props) => {
   const dispatch = useAppDispatch();
-  const activeLeague: League = useAppSelector(getActiveLeague)!;
+  const activeLeague: fromModels.League = useAppSelector(getActiveLeague)!;
+  const teams = useAppSelector(getPlayers);
+  // const casters = useAppSelector(getCasters);
+  const loading = useAppSelector(getPlayerScreenLoading);
+
   useFocusEffect(
     useCallback(() => {
-      // dispatch(fromActions.getPlayers(activeLeague.key));
+      if (teams.length === 0) {
+        dispatch(loadPlayersByLeague(activeLeague.key));
+      }
+      // if (casters.length === 0) {
+      //   dispatch(loadCastersByLeague(activeLeague.key));
+      // }
+
       return () => {};
     }, [activeLeague]),
   );
 
+  const redirectToPlayerDetails = (player: fromModels.Player) => {
+    navigation.navigate("PlayerDetails", {
+      playerId: player.id,
+      playerName: player.name,
+    });
+  };
+
+  const handleRefreshTeamsData = () => {
+    dispatch(loadPlayersByLeague(activeLeague.key));
+  };
+
+  const handleRefreshCastersData = () => {
+    dispatch(loadCastersByLeague(activeLeague.key));
+  };
+
   return (
-    <Tabs mode="scrollable">
+    <Tabs>
       <TabScreen label={"Players"}>
-        <Players />
+        <Players
+          teams={teams}
+          handlePlayerDetails={redirectToPlayerDetails}
+          refreshData={handleRefreshTeamsData}
+          loading={loading}
+        />
       </TabScreen>
       <TabScreen label={"Substitutes"}>
         <Substitutes />
       </TabScreen>
+      {/* 
       <TabScreen label={"Connoissueurs"}>
         <Connoissueurs />
-      </TabScreen>
-      <TabScreen label={"Casters"}>
-        <Casters />
-      </TabScreen>
+      </TabScreen> */}
+      {/* <TabScreen label={"Casters"}>
+        <Block margin={10}>
+          <Casters casters={casters} refreshData={handleRefreshCastersData} />
+        </Block>
+      </TabScreen> */}
       {/* <TabScreen label={"Cooldown"}>
         <Connoissueurs />
       </TabScreen> */}

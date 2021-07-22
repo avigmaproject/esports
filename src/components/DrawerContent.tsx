@@ -1,14 +1,14 @@
 import React from "react";
 import { Alert, StyleSheet } from "react-native";
 import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
-import { useTheme, Drawer } from "react-native-paper";
+import { useTheme, Drawer, List, Divider } from "react-native-paper";
 
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
 import { theme } from "./../core/theme";
 import Block from "./Block";
 import { useAppDispatch, useAppSelector } from "../store";
-import { getActiveLeague } from "../modules/home/store";
+import { getActiveLeague } from "../modules/tournaments/store";
 import { logoutUser } from "../modules/auth/store";
 
 const DrawerContent = (props: any) => {
@@ -40,6 +40,7 @@ const DrawerContent = (props: any) => {
       }}>
       <Block style={styles.drawerContent}>
         <Drawer.Section style={styles.drawerSection}>
+          <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
@@ -47,16 +48,19 @@ const DrawerContent = (props: any) => {
             label={
               activeLeague ? `${activeLeague.title} League` : "Select League"
             }
-            onPress={() => props.navigation.navigate("SelectLeague")}
+            onPress={() =>
+              props.navigation.navigate("Home", {
+                screen: "Home",
+                params: {
+                  screen: "SelectLeague",
+                  params: {
+                    afterLogin: true,
+                  },
+                },
+              })
+            }
           />
-          {/* 
-          <DrawerItem
-            icon={({ color, size }) => (
-              <SimpleLineIcons name="check" color={color} size={size} />
-            )}
-            label="Teams"
-            onPress={() => {}}
-            />*/}
+          <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
@@ -66,6 +70,7 @@ const DrawerContent = (props: any) => {
               props.navigation.navigate("Home", { screen: "Home" })
             }
           />
+          <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
@@ -75,6 +80,7 @@ const DrawerContent = (props: any) => {
               props.navigation.navigate("Home", { screen: "Standings" })
             }
           />
+          <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
@@ -84,57 +90,94 @@ const DrawerContent = (props: any) => {
               props.navigation.navigate("Home", { screen: "Tournaments" })
             }
           />
-
-          {/* 
+          <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
             label="Members"
-            onPress={() => {}}
+            onPress={() =>
+              props.navigation.navigate("Home", { screen: "Players" })
+            }
           />
+          <Divider />
+          <List.Accordion
+            title="Register"
+            left={props => (
+              <SimpleLineIcons name="check" {...props} size={25} />
+            )}
+            style={{ marginLeft: 11 }}
+            titleStyle={{
+              marginLeft: 20,
+              fontSize: 14,
+            }}>
+            <Divider />
+            <List.Item
+              title="Create a Team"
+              titleStyle={{ fontSize: 14 }}
+              onPress={() =>
+                props.navigation.navigate("Home", {
+                  screen: "Home",
+                  params: {
+                    screen: "CreateTeam",
+                  },
+                })
+              }
+            />
+            <Divider />
+            <List.Item
+              title="Join as subsitute"
+              titleStyle={{ fontSize: 14 }}
+              onPress={() =>
+                props.navigation.navigate("Home", {
+                  screen: "Home",
+                  params: {
+                    screen: "JoinAsSubstitute",
+                  },
+                })
+              }
+            />
+            <Divider />
+            <List.Item
+              title="Recruiting Teams"
+              titleStyle={{ fontSize: 14 }}
+              onPress={() =>
+                props.navigation.navigate("Home", {
+                  screen: "Home",
+                  params: {
+                    screen: "RecruitingTeams",
+                  },
+                })
+              }
+            />
+          </List.Accordion>
+          <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
-            label="Rules"
-            onPress={() => {}}
+            label="FAQs"
+            onPress={() =>
+              props.navigation.navigate("Home", {
+                screen: "Home",
+                params: { screen: "FAQs" },
+              })
+            }
           />
+          <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
-            label="Register"
-            onPress={() => {}}
+            label="Our Sponsors"
+            onPress={() =>
+              props.navigation.navigate("Home", {
+                screen: "Home",
+                params: { screen: "OurSponsors" },
+              })
+            }
           />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <SimpleLineIcons name="check" color={color} size={size} />
-            )}
-            label="Sponsers"
-            onPress={() => {}}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <SimpleLineIcons name="check" color={color} size={size} />
-            )}
-            label="Merch Store"
-            onPress={() => {}}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <SimpleLineIcons name="check" color={color} size={size} />
-            )}
-            label="About VRML"
-            onPress={() => {}}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <SimpleLineIcons name="check" color={color} size={size} />
-            )}
-            label="Contact Us"
-            onPress={() => {}}
-          /> */}
+          <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />

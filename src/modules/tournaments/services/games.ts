@@ -5,7 +5,7 @@ import * as fromModels from "../models";
 export const getPlayersByLeague = async (
   league: string,
   region?: string,
-): Promise<fromModels.Team[]> => {
+): Promise<fromModels.TeamDetPlayers[]> => {
   return await api().get(`/${league}/Players?region=${region}`);
 };
 
@@ -110,3 +110,30 @@ export const voteForTeam = async (matchId: string) =>
 
 export const voteForCast = async (matchId: string) =>
   await api().get(`/Matches/${matchId}/voteCast`);
+
+export const getPlayerDetails = async (
+  playerId: string,
+): Promise<fromModels.Player> => await api().get(`/Players/${playerId}`);
+
+export const createTeam = async (request: fromModels.CreateTeam) => {
+  return api().put(`/Teams`, request);
+};
+
+export const registerAsSubstitute = async (
+  request: fromModels.RegisterAsSubstitute,
+) => {
+  return api().put(`/${request.game}/Substitutes/${request.region}`, request);
+};
+
+export const unregisterAsSubstitute = async (game: string) => {
+  return api().delete(`/${game}/Substitutes`);
+};
+
+export const statsBetweenTeams = async (
+  homeTeamId: string,
+  awayTeamId: string,
+): Promise<fromModels.TeamsStats> =>
+  await api().get(`/Teams/${awayTeamId}/${awayTeamId}`);
+
+export const sendRecruitMe = async (request: fromModels.RecruitTeamRequest) =>
+  await api().patch(`/Teams/${request.teamId}`, request.recruitReq);

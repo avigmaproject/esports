@@ -36,6 +36,7 @@ export const loadMyTeams = createAsyncThunk(
     try {
       return await fromServices.myTeams();
     } catch (error) {
+      console.log(error.response);
       return rejectWithValue(error.response.data);
     }
   },

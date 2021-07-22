@@ -15,7 +15,7 @@ import {
 
 import { Block, Text, TextInput } from "../../../components";
 import { useAppDispatch, useAppSelector } from "../../../store";
-import { getActiveLeague } from "../../home/store";
+import { getActiveLeague } from "../../tournaments/store";
 import ScheduledMatches from "../components/matches/ScheduledMatches";
 import { TeamMatchHistory } from "../components/team-details";
 import {
@@ -28,6 +28,7 @@ import {
 } from "../store";
 import * as fromModels from "../models";
 import { theme as coreTheme } from "../../../core/theme";
+import { FILTER_REGIONS } from "../../../config";
 
 type Props = {
   navigation: fromModels.MatchesStackNavigationProp;
@@ -46,24 +47,9 @@ const Matches = ({ navigation }: Props) => {
 
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [selectedRegion, setSelectedRegion] = useState<string>("");
-  const [regions, setRegions] = useState<{ code: string; title: string }[]>([
-    {
-      code: "NA",
-      title: "America East",
-    },
-    {
-      code: "OCE",
-      title: "Oceanic/Asia",
-    },
-    {
-      code: "EU",
-      title: "Europe",
-    },
-    {
-      code: "",
-      title: "None",
-    },
-  ]);
+  const [regions, setRegions] = useState<{ code: string; title: string }[]>(
+    FILTER_REGIONS,
+  );
   const [posMin, setPosMin] = useState<string>("");
   const [visible, setVisible] = React.useState(false);
   const [filterRegionRank, setFilterRegionRank] = useState<
@@ -149,6 +135,17 @@ const Matches = ({ navigation }: Props) => {
     hideDialog();
   };
 
+  const redirectToMatchDetails = (match: fromModels.BaseMatch) => {
+    navigation.navigate("MatchDetails", {
+      matchId: match.id,
+    });
+  };
+  const redirectToTeamDetails = (match: fromModels.BaseTeam) => {
+    // navigation.navigate("MatchDetails", {
+    //   matchId: match.id,
+    // });
+  };
+
   const renderFilterModal = () => {
     return (
       <Portal>
@@ -173,7 +170,7 @@ const Matches = ({ navigation }: Props) => {
             {tabIndex === 1 && (
               <Block noflex paddingHorizontal={20}>
                 <TextInput
-                  placeholder="Minimum Position"
+                  placeholder="Minimum Rank"
                   value={posMin}
                   onChangeText={text => setPosMin(text)}
                   inputStyle={styles.textInput}
@@ -210,28 +207,34 @@ const Matches = ({ navigation }: Props) => {
         </TabScreen>
         <TabScreen label="Past">
           <Block noflex margin={10}>
-            <TeamMatchHistory matches={pastMatches} />
+            <TeamMatchHistory
+              matches={pastMatches}
+              goToMatchDetails={redirectToMatchDetails}
+              goToTeamDetails={redirectToTeamDetails}
+            />
           </Block>
         </TabScreen>
       </Tabs>
       {renderFilterModal()}
-      <Portal>
-        <FAB
-          style={{
-            position: "absolute",
-            margin: 16,
-            right: 0,
-            bottom: 75,
-          }}
-          icon="filter"
-          onPress={showDialog}
-          visible={
-            tabIndex === 0
-              ? upcomingMatches.length > 0 && isFocused
-              : pastMatches.length > 0 && isFocused
-          }
-        />
-      </Portal>
+      {!visible && (
+        <Portal>
+          <FAB
+            style={{
+              position: "absolute",
+              margin: 16,
+              right: 0,
+              bottom: 75,
+            }}
+            icon="filter"
+            onPress={showDialog}
+            visible={
+              tabIndex === 0
+                ? upcomingMatches.length > 0 && isFocused
+                : pastMatches.length > 0 && isFocused
+            }
+          />
+        </Portal>
+      )}
     </React.Fragment>
   );
 };

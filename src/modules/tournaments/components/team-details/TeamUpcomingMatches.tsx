@@ -13,7 +13,9 @@ const TeamUpcomingMatches = ({ matches }: Props) => {
     <React.Fragment>
       <Block noflex margin={10}>
         <Block noflex center marginBottom={10}>
-          <Text title>Upcoming Matches</Text>
+          <Text title primary>
+            Upcoming Matches
+          </Text>
         </Block>
         <Block noflex>
           <DataTable>

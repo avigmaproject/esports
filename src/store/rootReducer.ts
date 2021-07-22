@@ -6,14 +6,6 @@ import { reducer as homeReducer } from "../modules/home";
 import { reducer as settingsReducer } from "../modules/settings";
 import { reducers as tournamentReducers } from "../modules/tournaments";
 
-// const reducers = combineReducers({
-//   commonReducer,
-//   authReducer,
-//   homeReducer,
-//   settingsReducer,
-// });
-
-// export default reducers;
 
 const reducers = {
   ...commonReducer,

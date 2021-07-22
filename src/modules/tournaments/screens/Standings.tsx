@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Alert,
+  RefreshControl,
 } from "react-native";
 import { useFocusEffect, useIsFocused } from "@react-navigation/core";
 import {
@@ -19,15 +20,32 @@ import {
   Divider,
   List,
   IconButton,
+  ActivityIndicator,
+  Modal,
 } from "react-native-paper";
 
-import { Block, Text, TextInput } from "../../../components";
+import { Block, Dropdown, Text, TextInput } from "../../../components";
 import { useAppDispatch, useAppSelector } from "../../../store";
-import { getLeagueStandings, loadStandingsByLeague } from "../store";
-import { getActiveLeague } from "../../home/store";
+import {
+  getLeagueRegions,
+  getLeagueRegionsWithCode,
+  getLeagueSeasons,
+  getLeagueStandings,
+  getStandingsLoading,
+  loadRegionsByLeague,
+  loadSeasonsByLeague,
+  loadStandingsByLeague,
+  resetStandingsLoading,
+  submitRecruitMe,
+} from "../store";
+import { getActiveLeague } from "../../tournaments/store";
 import { resolveImage } from "../../../utils";
 import * as fromModels from "../models";
-import { theme as coreTheme } from "../../../core/theme";
+import { theme as coreTheme, theme } from "../../../core/theme";
+import { clearHeaderSubTitle, setHeaderSubTitle } from "../../common/store";
+import { FILTER_REGIONS, indexRegionByName } from "../../../config";
+import { useToast } from "react-native-paper-toast";
+import { ValueType } from "react-native-dropdown-picker";
 
 type Props = {
   navigation: fromModels.StandingsStackNavigationProp;
@@ -36,29 +54,19 @@ type Props = {
 const Standings = ({ navigation }: Props) => {
   const ref = React.useRef<ScrollView>(null);
   const dispatch = useAppDispatch();
+  const toaster = useToast();
   const activeLeague = useAppSelector(getActiveLeague)!;
+  const seasons = useAppSelector(getLeagueSeasons);
+  const regions = useAppSelector(getLeagueRegionsWithCode);
   const standings = useAppSelector(getLeagueStandings);
+  const loading = useAppSelector(getStandingsLoading);
   const isFocused = useIsFocused();
 
   const [selectedRegion, setSelectedRegion] = useState<string>("");
-  const [regions, setRegions] = useState<{ code: string; title: string }[]>([
-    {
-      code: "NA",
-      title: "America East",
-    },
-    {
-      code: "OCE",
-      title: "Oceanic/Asia",
-    },
-    {
-      code: "EU",
-      title: "Europe",
-    },
-    {
-      code: "",
-      title: "None",
-    },
-  ]);
+  // const [regions, setRegions] = useState<{ code: string; title: string }[]>(
+  //   FILTER_REGIONS,
+  // );
+  const [selectedSeason, setSelectedSeason] = useState<string>("");
   const [rankMin, setRankMin] = useState<string>("");
   const [paginateRankMax, setPaginateRankMax] = useState<number | undefined>(
     undefined,
@@ -68,19 +76,59 @@ const Standings = ({ navigation }: Props) => {
     | {
         region: string;
         rankMin: string;
+        season: string;
       }
     | undefined
   >(undefined);
+
+  const indexSeasons: { [key: string]: string } = seasons.reduce(
+    (acc, cur) => ({
+      ...acc,
+      [cur.id]: cur.name,
+    }),
+    {},
+  );
+
+  const [drpSeasons, setDrpSeasons] = useState<
+    { label: string; value: string }[]
+  >(seasons.map(season => ({ label: season.name, value: season.id })));
+
+  const setSeasons = () => {
+    setDrpSeasons(
+      seasons.map(season => ({ label: season.name, value: season.id })),
+    );
+  };
 
   const showDialog = () => {
     if (filterRegionRank) {
       setSelectedRegion(filterRegionRank.region);
       setRankMin(filterRegionRank.rankMin);
+      setSelectedSeason(filterRegionRank.season);
     }
     setVisible(true);
   };
 
   const hideDialog = () => setVisible(false);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      dispatch(clearHeaderSubTitle());
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      dispatch(loadSeasonsByLeague(activeLeague.key));
+      dispatch(loadRegionsByLeague(activeLeague.key));
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [activeLeague.key]);
 
   useFocusEffect(
     useCallback(() => {
@@ -90,6 +138,7 @@ const Standings = ({ navigation }: Props) => {
         navigation.setOptions({
           headerTitle: `Worldwide`,
         });
+        dispatch(setHeaderSubTitle("Ladder"));
 
         let request: fromModels.StandingRequest = {
           league: activeLeague.key,
@@ -99,13 +148,15 @@ const Standings = ({ navigation }: Props) => {
             ...request,
             region: filterRegionRank.region,
             rankMin: parseInt(filterRegionRank.rankMin, 10),
+            season: filterRegionRank.season,
           };
+
           if (filterRegionRank.region) {
             const rg = regions.find(
               item => item.code === filterRegionRank.region,
             );
             navigation.setOptions({
-              headerTitle: rg?.title,
+              headerTitle: rg?.name,
             });
           } else {
             navigation.setOptions({
@@ -149,14 +200,48 @@ const Standings = ({ navigation }: Props) => {
     });
   };
 
-  const recruitMe = () => {
-    Alert.alert("Info", "Under Construction");
+  const onRefresh = () => {
+    setFilterRegionRank({
+      region: "",
+      rankMin: "",
+      season: "",
+    });
+    setPaginateRankMax(undefined);
+    setSelectedRegion("");
+    setRankMin("");
+  };
+
+  const recruitMe = async (team: fromModels.Team) => {
+    try {
+      await dispatch(
+        submitRecruitMe({
+          teamId: team.id,
+          recruitReq: {
+            op: "replace",
+            path: "/recruitRequest",
+            value: true,
+          },
+        }),
+      );
+      dispatch(loadStandingsByLeague({ league: activeLeague.key }));
+      toaster.show({
+        message: "Recruit request has been sent successfully.",
+        type: "success",
+      });
+    } catch (error) {
+      toaster.show({
+        message:
+          "An error occurred while processing your request. Please try again.",
+        type: "error",
+      });
+    }
   };
 
   const handleRegionFilterModal = () => {
     setFilterRegionRank({
       region: selectedRegion,
       rankMin: rankMin,
+      season: selectedSeason,
     });
     hideDialog();
   };
@@ -172,42 +257,65 @@ const Standings = ({ navigation }: Props) => {
         <Dialog visible={visible} onDismiss={hideDialog}>
           <Dialog.Title>Filter</Dialog.Title>
           <Divider />
-          <Dialog.Content
+          <Dialog.ScrollArea
             style={{
               paddingHorizontal: 0,
+              maxHeight: 400,
             }}>
-            <List.Section>
-              <List.Subheader>Region</List.Subheader>
-              <RadioButton.Group
-                onValueChange={newValue => setSelectedRegion(newValue)}
-                value={selectedRegion}>
-                {regions.map(region => (
-                  <RadioButton.Item
-                    label={region.title}
-                    value={region.code}
-                    key={`region-${region.code}`}
+            <ScrollView>
+              <List.Section>
+                <List.Subheader>Season</List.Subheader>
+                <RadioButton.Group
+                  onValueChange={newValue => setSelectedSeason(newValue)}
+                  value={selectedSeason}>
+                  {seasons.map(season => (
+                    <RadioButton.Item
+                      label={season.name}
+                      value={season.id}
+                      key={`region-${season.id}`}
+                      style={{
+                        paddingVertical: 2,
+                      }}
+                    />
+                  ))}
+                </RadioButton.Group>
+              </List.Section>
+              <List.Section>
+                <List.Subheader>Region</List.Subheader>
+                <RadioButton.Group
+                  onValueChange={newValue => setSelectedRegion(newValue)}
+                  value={selectedRegion}>
+                  {regions.map(region => (
+                    <RadioButton.Item
+                      label={region.name}
+                      value={region.code}
+                      key={`region-${region.code}`}
+                      style={{
+                        paddingVertical: 2,
+                      }}
+                    />
+                  ))}
+                </RadioButton.Group>
+              </List.Section>
+              <Divider />
+              <List.Section>
+                <List.Subheader>Min Rank</List.Subheader>
+                <Block noflex marginHorizontal={15}>
+                  <TextInput
+                    placeholder="Minimum Rank"
+                    returnKeyType="next"
+                    value={rankMin}
+                    onChangeText={text => setRankMin(text)}
+                    autoCapitalize="none"
+                    inputStyle={styles.textInput}
+                    placeholderTextColor="#adadad"
+                    containerStyle={styles.textInputContainer}
+                    keyboardType="numeric"
                   />
-                ))}
-              </RadioButton.Group>
-            </List.Section>
-            <Divider />
-            <List.Section>
-              <List.Subheader>Min Rank</List.Subheader>
-              <Block noflex marginHorizontal={15}>
-                <TextInput
-                  placeholder="Minimum Rank"
-                  returnKeyType="next"
-                  value={rankMin}
-                  onChangeText={text => setRankMin(text)}
-                  autoCapitalize="none"
-                  inputStyle={styles.textInput}
-                  placeholderTextColor="#adadad"
-                  containerStyle={styles.textInputContainer}
-                  keyboardType="numeric"
-                />
-              </Block>
-            </List.Section>
-          </Dialog.Content>
+                </Block>
+              </List.Section>
+            </ScrollView>
+          </Dialog.ScrollArea>
           <Divider />
           <Dialog.Actions>
             <Button onPress={hideDialog}>Cancel</Button>
@@ -264,7 +372,17 @@ const Standings = ({ navigation }: Props) => {
           </DataTable.Header>
 
           {standings.length > 0 ? (
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} ref={ref}>
+            <ScrollView
+              contentContainerStyle={{ flexGrow: 1 }}
+              ref={ref}
+              refreshControl={
+                <RefreshControl
+                  refreshing={loading}
+                  onRefresh={onRefresh}
+                  tintColor={theme.colors.primary}
+                  colors={[theme.colors.primary, theme.colors.text]}
+                />
+              }>
               {standings.map(standing => (
                 <DataTable.Row
                   key={`standings-${standing.id}`}
@@ -278,18 +396,25 @@ const Standings = ({ navigation }: Props) => {
                   <DataTable.Cell
                     style={{
                       justifyContent: "center",
+                      paddingVertical: 0,
+                      marginVertical: 0,
                     }}>
-                    <Image
-                      source={{ uri: resolveImage(standing.divisionLogo) }}
-                      style={{ width: 20, height: 20 }}
-                    />
+                    <Block>
+                      <Image
+                        source={{ uri: resolveImage(standing.divisionLogo) }}
+                        style={{
+                          width: 20,
+                          height: 20,
+                        }}
+                      />
+                    </Block>
                   </DataTable.Cell>
 
                   <Block row style={{ flex: 3 }} center>
                     <TouchableRipple
                       style={{ flex: 1, flexDirection: "row" }}
                       onPress={() => goToTeamDetails(standing)}>
-                      <Block row>
+                      <Block row center>
                         <Image
                           source={{ uri: resolveImage(standing.logo) }}
                           style={{
@@ -310,7 +435,7 @@ const Standings = ({ navigation }: Props) => {
                     {standing.isRecruiting && (
                       <TouchableRipple
                         style={{ flex: 0, borderRadius: 50 }}
-                        onPress={recruitMe}>
+                        onPress={() => recruitMe(standing)}>
                         <Image
                           source={require("../../../assets/icons/teamIsRecruiting.png")}
                           style={{ width: 20, height: 20 }}
@@ -322,7 +447,7 @@ const Standings = ({ navigation }: Props) => {
                     style={{
                       justifyContent: "center",
                     }}>
-                    {"EU"}
+                    {indexRegionByName[standing.region] ?? "-"}
                   </DataTable.Cell>
                   <DataTable.Cell
                     style={{
@@ -360,19 +485,21 @@ const Standings = ({ navigation }: Props) => {
           )}
         </DataTable>
         {renderRegionRegFilterModal()}
-        <Portal>
-          <FAB
-            style={{
-              position: "absolute",
-              margin: 16,
-              right: 0,
-              bottom: 75,
-            }}
-            icon="filter"
-            onPress={showDialog}
-            visible={isFocused}
-          />
-        </Portal>
+        {!visible && (
+          <Portal>
+            <FAB
+              style={{
+                position: "absolute",
+                margin: 16,
+                right: 0,
+                bottom: 75,
+              }}
+              icon="filter"
+              onPress={showDialog}
+              visible={isFocused}
+            />
+          </Portal>
+        )}
       </SafeAreaView>
     </React.Fragment>
   );

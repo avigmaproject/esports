@@ -1,6 +1,10 @@
+import { IPatchJson } from "./state";
+
 export interface Region {
   id: string;
   name: string;
+  icon: string;
+  code?: string;
 }
 
 export interface Season {
@@ -126,8 +130,8 @@ export interface TeamsStats {
   team2RankWorldwide: number;
   commonMatches: MatchDetails[];
   commonMaps: Stadium[];
-  team1History: any[];
-  team2History: any[];
+  team1History: TeamHistory[];
+  team2History: TeamHistory[];
 }
 
 export interface Stadium {
@@ -148,7 +152,7 @@ export interface TeamHistory {
   winPercentage: number;
   roundsPlayed: number;
   roundsWin: number;
-  roundsWinPercentage: number;
+  roudsWinPercentage: number;
 }
 
 export interface TeamUpcomingMatches {
@@ -174,6 +178,7 @@ export interface StandingRequest {
   league: string;
   region?: string;
   rankMin?: number;
+  season?: string;
 }
 
 export interface TeamDetPlayers {
@@ -185,7 +190,7 @@ export interface TeamDetPlayers {
   region: string;
   active: boolean;
   retired: boolean;
-  players: Player[];
+  players?: Player[];
 }
 
 export interface Player {
@@ -197,4 +202,40 @@ export interface Player {
   nationality: string;
   roleID: string;
   role: string;
+}
+
+export interface League {
+  title: string;
+  key: string;
+  logo?: string;
+}
+
+export interface CreateTeam {
+  name: string;
+  region: string;
+}
+
+export interface RegisterAsSubstitute {
+  game: string;
+  region: string;
+}
+
+export interface MatchStats {
+  homeTeamId: string;
+  awayTeamId: string;
+}
+
+export interface MatchTeamDetails {
+  homeTeam: TeamDetPlayers;
+  awayTeam: TeamDetPlayers;
+}
+
+export interface MatchTeamDetailsRequest {
+  homeTeamId: string;
+  awayTeamId: string;
+}
+
+export interface RecruitTeamRequest {
+  teamId: string;
+  recruitReq: IPatchJson;
 }

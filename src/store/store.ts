@@ -6,16 +6,6 @@ import {
   combineReducers,
   getDefaultMiddleware,
 } from "@reduxjs/toolkit";
-// import {
-//   persistStore,
-//   persistReducer,
-//   FLUSH,
-//   REHYDRATE,
-//   PAUSE,
-//   PERSIST,
-//   PURGE,
-//   REGISTER,
-// } from "reduxjs-toolkit-persist";
 import {
   persistStore,
   persistReducer,
@@ -27,19 +17,28 @@ import {
   REGISTER,
 } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import storage from "reduxjs-toolkit-persist/lib/storage";
+import purgeStoredState from "redux-persist/es/purgeStoredState";
 import reducers from "./rootReducer"; //Import the root reducer
 
 const persistConfig = {
   key: "vrmasterleague-app",
-  // storage,
   storage: AsyncStorage,
 };
 
-const persistedReducer = persistReducer(
-  persistConfig,
-  combineReducers(reducers),
-);
+const appReducer = combineReducers(reducers);
+
+const rootReducer = (state, action) => {
+  if (action.type === "auth/logoutUser") {
+    purgeStoredState({
+      key: "vrmasterleague-app",
+      storage: AsyncStorage,
+    });
+    state = undefined;
+  }
+  return appReducer(state, action);
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -48,6 +47,7 @@ export const store = configureStore({
       ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
     },
   }),
+  // devTools: false,
 });
 
 export const persistor = persistStore(store);

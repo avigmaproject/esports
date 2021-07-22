@@ -9,19 +9,30 @@ import {
   Match,
   Player,
   MatchHistory,
+  TeamDetPlayers,
+  League,
+  TeamsStats,
+  MatchTeamDetails,
 } from "./games";
 
 export interface CustomError {
   message: string;
 }
 
+export interface IPatchJson {
+  op: string;
+  path: string;
+  value?: any;
+}
+
 export interface TournamentState {
-  players: string[];
+  teamPlayers: TeamDetPlayers[];
   regions: Region[];
   seasons: Season[];
   casters: Caster[];
   maps: BaseStadium[];
   standings: Team[];
+  standingsLoading: boolean;
   error: string | undefined;
   filterRegRank: FilterRegionMinRank | undefined;
   teamDetails: Team | undefined;
@@ -30,6 +41,14 @@ export interface TournamentState {
   teamMatchesHistory: MatchHistory[];
   upcomingMatches: Match[];
   pastMatches: MatchHistory[];
+  playerDetails: Player | undefined;
+  playerScreenLoading: boolean;
+  activeLeague: League | undefined;
+  leagues: League[];
+  teamStats: TeamsStats | undefined;
+  teamStatsLoading: boolean;
+  matchTeamDetails: MatchTeamDetails | undefined;
+  matchTeamDetailsLoading: boolean;
 }
 
 export interface FilterRegionMinRank {
@@ -37,16 +56,43 @@ export interface FilterRegionMinRank {
   rankMin: number | null;
 }
 
+export type PlayerStackParamList = {
+  Players: undefined;
+  PlayerDetails: {
+    playerId: string;
+    playerName: string;
+  };
+};
+
 export type StandingsStackParamList = {
-  Standings: undefined;
+  Standings: {
+    recruitingTeams?: boolean;
+  };
   TeamDetails: {
     teamId: string;
     teamName: string;
+  };
+  PlayerDetails: {
+    playerId: string;
+    playerName: string;
+  };
+};
+
+export type HomeStackParamList = {
+  Home: undefined;
+};
+
+export type SelectLeagueParamList = {
+  SelectLeague: {
+    afterLogin: boolean;
   };
 };
 
 export type MatchesStackParamList = {
   Matches: undefined;
+  MatchDetails: {
+    matchId: string;
+  };
 };
 
 export type TeamDetailsRouteProp = RouteProp<
@@ -59,4 +105,23 @@ export type StandingsStackNavigationProp = StackNavigationProp<
   "TeamDetails"
 >;
 
+export type PlayersStackNavigatorProp = StackNavigationProp<
+  PlayerStackParamList,
+  "PlayerDetails"
+>;
+
+export type PlayerDetailsRouteProp = RouteProp<
+  PlayerStackParamList,
+  "PlayerDetails"
+>;
+
+export type SelectLeagueRouteProp = RouteProp<
+  SelectLeagueParamList,
+  "SelectLeague"
+>;
+
+export type MatchesRouteProp = RouteProp<MatchesStackParamList, "MatchDetails">;
+
 export type MatchesStackNavigationProp = StackNavigationProp<MatchesStackParamList>;
+export type HomeStackNavigationProp = StackNavigationProp<HomeStackParamList>;
+export type SelectLeagueStackNavigationProp = StackNavigationProp<SelectLeagueParamList>;

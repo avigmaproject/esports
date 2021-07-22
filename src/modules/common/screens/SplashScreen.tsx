@@ -14,9 +14,11 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { setAppReady, setSnackbarMessage } from "../store";
+import { useToast } from "react-native-paper-toast";
 
 const SplashScreen = () => {
   const dispatch = useAppDispatch();
+  const toaster = useToast();
   const token: string | null = useAppSelector(getToken);
 
   useEffect(() => {
@@ -30,22 +32,25 @@ const SplashScreen = () => {
           if (user) {
             dispatch(loginUser(token));
             dispatch(setMeDetails(user));
-            await dispatch(setAppReady());
+            dispatch(setAppReady());
           } else {
             // console.log(`user not found`);
-            await dispatch(clearStore());
-            await dispatch(setAppReady());
+            dispatch(clearStore());
+            dispatch(setAppReady());
           }
         } else {
           // console.log(`token not found`);
-          // await dispatch(clearStore());
-          await dispatch(setAppReady());
+          await dispatch(clearStore());
+          dispatch(setAppReady());
         }
       } catch (error) {
-        console.log(error);
-        await dispatch(clearStore());
-        await dispatch(setAppReady());
-        dispatch(setSnackbarMessage("Invalid session. Please login again."));
+        // console.log(error);
+        dispatch(clearStore());
+        dispatch(setAppReady());
+        toaster.show({
+          message: "Invalid session. Please login again.",
+          type: "info",
+        });
       }
     };
     checkUser();
@@ -60,7 +65,7 @@ const SplashScreen = () => {
     <ImageBackground
       source={require("../../../assets/images/background-image.png")}
       style={styles.container}>
-      <Block>
+      <Block center middle>
         <ActivityIndicator size={30} color={"#ffffff"} />
       </Block>
     </ImageBackground>
