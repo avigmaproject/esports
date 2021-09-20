@@ -21,8 +21,8 @@ type Props = {
 const loginSchema = yup.object().shape({
   email: yup
     .string()
-    .email("Please enter valid email address")
-    .required("Email Address is required"),
+    .email("Please an enter valid email address.")
+    .required("E-mail address is required."),
 });
 
 const ForgotPassword = ({ navigation }: Props) => {

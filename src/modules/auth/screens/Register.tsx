@@ -155,28 +155,41 @@ const Login = ({ navigation }: Props) => {
   };
 
   const handleUsernameCheck = async (username: string) => {
+    debugger;
+    console.log("hiiii");
     setUsernameAvailable(false);
+    console.log("hiiii666");
     if (!username.match(/^[a-zA-Z0-9\-_]{0,40}$/)) {
+      console.log("hiiii1");
       setErrorForm("username", { message: "Username must be alphanumeric" });
       return false;
     }
+    console.log("hiiii2");
     setUsernameLoading(true);
     clearErrors("username");
     try {
       if (username.trim()) {
+        console.log("hiiii3");
         const { exists }: IUsernameExists = await checkUsername(
           username.trim(),
         );
+        console.log("hiiii4");
+
         if (exists) {
+          console.log("hiiii5");
           setErrorForm("username", { message: "Username already in use." });
         } else {
+          console.log("hiiii6");
           setUsernameAvailable(true);
         }
+        console.log("hiiii7");
         setUsernameLoading(false);
       } else {
+        console.log("hiiii8");
         setUsernameLoading(false);
       }
     } catch (error) {
+      console.log("hiiii9");
       console.log({ error });
       setUsernameLoading(false);
     }
@@ -186,6 +199,11 @@ const Login = ({ navigation }: Props) => {
     return errors.hasOwnProperty(field);
   };
 
+  React.useEffect(() => {
+    console.log("usernameAvailable", !usernameAvailable);
+
+    return () => {};
+  });
   return (
     <ScrollView
       style={{
@@ -298,7 +316,7 @@ const Login = ({ navigation }: Props) => {
               control={control}
               render={({ field: { onChange, value } }) => (
                 <TextInput
-                  placeholder="Your Confirm Password"
+                  placeholder="Your Password"
                   returnKeyType="next"
                   value={value}
                   onChangeText={value => onChange(value)}
@@ -360,7 +378,7 @@ const Login = ({ navigation }: Props) => {
               defaultValue=""
             />
             <HelperText type="info" style={{ paddingLeft: 0 }}>
-              Your email will not be given or sold to anyone
+              Your email will not be given or sold to anyone.
             </HelperText>
           </Block>
           <Block
@@ -368,7 +386,8 @@ const Login = ({ navigation }: Props) => {
             paddingHorizontal={30}
             paddingVertical={20}
             marginBottom={10}
-            style={{ backgroundColor: "#03152f" }}>
+            // style={{ backgroundColor: "#03152f" }}
+          >
             <Text color={theme.colors.text}>
               Stream URL (include the https://)
             </Text>
@@ -384,7 +403,7 @@ const Login = ({ navigation }: Props) => {
                   errorText={errors?.streamUrl?.message}
                   inputStyle={[
                     styles.textInput,
-                    { backgroundColor: "#03152f" },
+                    // { backgroundColor: "#03152f" },
                   ]}
                   placeholderTextColor="#adadad"
                   containerStyle={styles.textInputContainer}
@@ -396,13 +415,13 @@ const Login = ({ navigation }: Props) => {
               defaultValue=""
             />
             <HelperText type="info" style={{ paddingLeft: 0 }}>
-              To promote your stream
+              To promote your stream.
             </HelperText>
           </Block>
           <Block noflex paddingHorizontal={30} center marginVertical={10}>
             <Block row noflex>
               <Text color={theme.colors.text} size={12}>
-                By signing-up, you agree to the{" "}
+                By signing up, you agree to the.{" "}
               </Text>
               <TouchableOpacity
                 onPress={() =>
@@ -412,9 +431,9 @@ const Login = ({ navigation }: Props) => {
                   noflex
                   style={{
                     borderBottomWidth: 2,
-                    borderBottomColor: theme.colors.text,
+                    borderBottomColor: theme.colors.primary,
                   }}>
-                  <Text color={theme.colors.text} size={12}>
+                  <Text color={theme.colors.primary} size={12}>
                     Terms of Use
                   </Text>
                 </Block>
@@ -429,13 +448,15 @@ const Login = ({ navigation }: Props) => {
               }
               loading={loading}
               disabled={!usernameAvailable || loading}>
-              Submit
+              Create Account
             </Button>
           </Block>
         </Block>
         <Block noflex center>
           <Block row noflex>
-            <Text color={theme.colors.text}>I'm already a member. </Text>
+            {/* <Text color={theme.colors.text}>I'm already a member. </Text> */}
+            <Text color={theme.colors.text}>Already a member? </Text>
+
             <TouchableOpacity onPress={() => navigation.navigate("Login")}>
               <Block
                 noflex

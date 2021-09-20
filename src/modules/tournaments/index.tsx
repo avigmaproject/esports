@@ -133,7 +133,7 @@ const SelectLeagueNavigator = () => {
       <Screen
         name="SelectLeague"
         component={SelectLeague}
-        options={{ headerTitle: "Select League" }}
+        options={{ headerTitle: "Select League" }}  // center it
       />
     </Navigator>
   );

@@ -1,10 +1,18 @@
 import React from "react";
-import { Alert, StyleSheet } from "react-native";
+import { Alert, StyleSheet, Modal } from "react-native";
 import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
 import { useTheme, Drawer, List, Divider } from "react-native-paper";
 
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-
+import {
+  Card,
+  Button,
+  Portal,
+  Dialog,
+  Paragraph,
+  Text,
+  HelperText,
+} from "react-native-paper";
 import { theme } from "./../core/theme";
 import Block from "./Block";
 import { useAppDispatch, useAppSelector } from "../store";
@@ -15,22 +23,43 @@ const DrawerContent = (props: any) => {
   const paperTheme = useTheme();
   const dispatch = useAppDispatch();
   const activeLeague = useAppSelector(getActiveLeague);
+  const [visible, setVisible] = React.useState(false);
 
   const handleLogout = () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        {
-          text: "Logout",
-          onPress: () => dispatch(logoutUser()),
-        },
-        { text: "Cancel" },
-      ],
-      { cancelable: false },
+    setVisible(true);
+    // Alert.alert(
+    //   "Logout",
+    //   "Are you sure you want to logout?",
+    //   [
+    //     {
+    //       text: "Logout",
+    //       onPress: () => dispatch(logoutUser()),
+    //     },
+    //     { text: "Cancel" },
+    //   ],
+    //   { cancelable: false },
+    // );
+  };
+  const renderInputModal = () => {
+    return (
+      <Portal>
+        <Dialog visible={visible}>
+          <Dialog.Title> Logout</Dialog.Title>
+          <Dialog.Content>
+            <HelperText type="info" style={{ paddingHorizontal: 0 }}>
+              Are you sure you want to logout?
+            </HelperText>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => dispatch(logoutUser())}>Logout</Button>
+          </Dialog.Actions>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(false)}>Cancel</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     );
   };
-
   return (
     <DrawerContentScrollView
       {...props}
@@ -46,26 +75,26 @@ const DrawerContent = (props: any) => {
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
             label={
-              activeLeague ? `${activeLeague.title} League` : "Select League"
+              activeLeague ? `${activeLeague.title} Master League` : "Select League"
             }
-            onPress={() =>
-              props.navigation.navigate("Home", {
-                screen: "Home",
-                params: {
-                  screen: "SelectLeague",
-                  params: {
-                    afterLogin: true,
-                  },
-                },
-              })
-            }
+            // onPress={() =>
+            //   props.navigation.navigate("Home", {
+            //     screen: "Home",
+            //     params: {
+            //       screen: "SelectLeague",
+            //       params: {
+            //         afterLogin: true,
+            //       },
+            //     },
+            //   })
+            // }
           />
           <Divider />
           <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
-            label="Home"
+            label={`${activeLeague.title} Home`}
             onPress={() =>
               props.navigation.navigate("Home", { screen: "Home" })
             }
@@ -95,7 +124,8 @@ const DrawerContent = (props: any) => {
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
-            label="Members"
+            // label="Members"
+            label="Players"
             onPress={() =>
               props.navigation.navigate("Home", { screen: "Players" })
             }
@@ -187,6 +217,7 @@ const DrawerContent = (props: any) => {
           />
         </Drawer.Section>
       </Block>
+      {renderInputModal()}
     </DrawerContentScrollView>
   );
 };

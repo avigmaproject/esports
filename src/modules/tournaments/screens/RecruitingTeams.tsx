@@ -35,6 +35,15 @@ const RecruitingTeams = ({ navigation }: Props) => {
       let mounted = true;
 
       if (mounted) {
+        standings.map(standing =>
+          console.log(
+            "standingsstandings333",
+            standing.logo,
+            standing.name,
+            standing.region,
+          ),
+        );
+
         navigation.setOptions({
           headerTitle: `Recruiting Teams`,
         });
@@ -120,7 +129,13 @@ const RecruitingTeams = ({ navigation }: Props) => {
                           marginLeft: 5,
                         }}
                       />
-                      <Text subtitle size={13} style={{ flexWrap: "wrap" }}>
+                      <Text
+                        subtitle
+                        size={13}
+                        style={{
+                          flex: 1,
+                          flexWrap: "wrap",
+                        }}>
                         {standing.name}
                       </Text>
                     </Block>

@@ -176,7 +176,7 @@ const Matches = ({ navigation }: Props) => {
                   inputStyle={styles.textInput}
                   placeholderTextColor="#adadad"
                   containerStyle={styles.textInputContainer}
-                  keyboardType="numeric"
+                  // keyboardType="numeric"
                 />
               </Block>
             )}

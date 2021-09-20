@@ -65,7 +65,8 @@ const Dropdown = ({
         color: theme.colors.text,
       }}
       modalContentContainerStyle={{
-        marginTop: 60,
+        marginTop:Platform.OS === "ios"? 35:0,
+
       }}
     />
   );

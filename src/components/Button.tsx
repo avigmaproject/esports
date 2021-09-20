@@ -17,7 +17,9 @@ const Button = ({
     style={[
       styles.button,
       mode === "outlined" && { backgroundColor: theme.colors.surface },
-      disabled && { backgroundColor: "#dedede" },
+      // disabled && { backgroundColor: "#dedede" },
+      disabled && { backgroundColor: theme.colors.primary },
+
       style,
     ]}
     labelStyle={[styles.text, labelStyle, disabled && { color: "#000" }]}
@@ -31,11 +33,11 @@ const styles = StyleSheet.create({
   button: {
     width: "100%",
     marginVertical: 10,
-    height: 45,
+    height: 50,
   },
   text: {
     fontSize: 17,
-    lineHeight: 28,
+    lineHeight: 28, //changes by minal
   },
 });
 

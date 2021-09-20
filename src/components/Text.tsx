@@ -51,6 +51,7 @@ type Props = {
   right?: boolean;
   spacing?: null | number; // letter-spacing
   height?: null | number; // line-height
+  ellipsizeMode: null;
 };
 
 class Typography extends Component<Props> {
@@ -92,6 +93,7 @@ class Typography extends Component<Props> {
     info: false,
     theme: {},
     style: {},
+    ellipsizeMode: null,
   };
 
   getSpacings(type: "margin" | "padding") {
@@ -183,6 +185,8 @@ class Typography extends Component<Props> {
       theme,
       style,
       children,
+      underline,
+      ellipsizeMode,
       ...props
     } = this.props;
 
@@ -247,6 +251,8 @@ class Typography extends Component<Props> {
       light && { fontWeight: WEIGHTS.light },
       center && styles.center,
       right && styles.right,
+      underline && { textDecorationLine: "underline" },
+      ellipsizeMode && { ellipsizeMode: "tail" },
       // color shortcuts
       primary && { color: COLORS.primary },
       secondary && { color: COLORS.secondary },

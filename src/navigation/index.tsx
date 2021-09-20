@@ -3,9 +3,12 @@ import { useTheme } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/Feather";
-
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StackNavigator as AuthNavigator } from "../modules/auth";
 import { StackNavigator as SettingsNavigator } from "../modules/settings";
 import {
@@ -59,9 +62,9 @@ const BottomTabNavigator = () => {
         options={{
           title: "Standings",
           tabBarIcon: ({ focused }) => {
-            let image = require("./../assets/tab-bar/inactive/leagues.png");
+            let image = require("./../assets/tab-bar/inactive/tournaments.png");
             if (focused) {
-              image = require("./../assets/tab-bar/active/leagues.png");
+              image = require("./../assets/tab-bar/active/tournaments.png");
             }
             return <Image source={image} />;
           },
@@ -77,7 +80,9 @@ const BottomTabNavigator = () => {
             if (focused) {
               image = require("./../assets/tab-bar/active/tournaments.png");
             }
-            return <Image source={image} />;
+            return <MaterialCommunityIcons  name="sword-cross"
+                color={focused ? theme.colors.primary : "#fafafa"}
+                size={20}/>;
           },
         }}
       />

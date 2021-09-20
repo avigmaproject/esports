@@ -85,6 +85,6 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontSize: 20,
     fontWeight: "800",
-    textTransform: "uppercase",
+    // textTransform: "uppercase",
   },
 });

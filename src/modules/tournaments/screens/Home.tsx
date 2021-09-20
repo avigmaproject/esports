@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../store";
 import { User } from "../../auth/models";
 import { getCurrentUser, logoutUser } from "../../auth/store";
 import { HomeStackNavigationProp } from "../models";
+import { getActiveLeague } from "../../tournaments/store";
 
 type Props = {
   navigation: HomeStackNavigationProp;
@@ -14,11 +15,21 @@ type Props = {
 const Home = ({ navigation }: Props) => {
   const dispatch = useAppDispatch();
   const user: User = useAppSelector(getCurrentUser)!;
+  const activeLeague = useAppSelector(getActiveLeague);
 
   const handleLogout = () => {
     dispatch(logoutUser());
   };
-
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerTitle: `${activeLeague?.title} Home`,
+    });
+    return () => {};
+  });
+  React.useEffect(() => {
+    console.log("userrrrr", user, activeLeague?.title);
+    return () => {};
+  });
   return (
     <Block safe flex>
       <Block center middle>

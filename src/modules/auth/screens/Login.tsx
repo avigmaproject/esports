@@ -26,8 +26,8 @@ type Props = {
 };
 
 const loginSchema = yup.object().shape({
-  username: yup.string().required("Username is required"),
-  password: yup.string().required("Password is required"),
+  username: yup.string().required("Username is required."),
+  password: yup.string().required("Password is required."),
 });
 
 const Login = ({ navigation }: Props) => {
@@ -91,7 +91,7 @@ const Login = ({ navigation }: Props) => {
     <Block color={theme.colors.background} style={styles.container}>
       <Header goBack={() => navigation.goBack()} />
       <Block flex>
-        <Block noflex center marginVertical={75}>
+        <Block noflex center marginVertical={10}>
           <Logo />
         </Block>
         <Block noflex paddingHorizontal={30}>
@@ -135,6 +135,7 @@ const Login = ({ navigation }: Props) => {
                   secureTextEntry={isSecureText}
                   inputStyle={styles.textInput}
                   placeholderTextColor="#adadad"
+                  autoCapitalize="none"
                   containerStyle={styles.textInputContainer}
                   right={
                     <IconButton
@@ -160,12 +161,21 @@ const Login = ({ navigation }: Props) => {
               defaultValue=""
             />
 
-            <Block noflex>
+            <Block style={{ justifyContent: "flex-end" }} row noflex>
               <TouchableRipple
                 onPress={() => navigation.navigate("ForgotPassword")}>
-                <Text color={theme.colors.text} right subtitle>
+                <Block
+                  row
+                  noflex
+                  style={{
+                    borderBottomWidth: 2,
+                    borderBottomColor: theme.colors.primary,
+                  }}>
+                  <Text color={theme.colors.primary}> Forgot Password?</Text>
+                </Block>
+                {/* <Text color={theme.colors.text} right subtitle>
                   Forgot Password?
-                </Text>
+                </Text> */}
               </TouchableRipple>
             </Block>
           </Block>
@@ -183,7 +193,9 @@ const Login = ({ navigation }: Props) => {
         </Block>
         <Block noflex center>
           <Block row noflex>
-            <Text color={theme.colors.text}>I'm a new user. </Text>
+            {/* <Text color={theme.colors.text}>I'm a new user. </Text> */}
+            <Text color={theme.colors.text}>New user?</Text>
+
             <TouchableOpacity onPress={() => navigation.navigate("Register")}>
               <Block
                 noflex
