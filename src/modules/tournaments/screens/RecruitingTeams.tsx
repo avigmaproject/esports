@@ -135,6 +135,7 @@ const RecruitingTeams = ({ navigation }: Props) => {
                         style={{
                           flex: 1,
                           flexWrap: "wrap",
+                          width:"80%"              //nfc
                         }}>
                         {standing.name}
                       </Text>
