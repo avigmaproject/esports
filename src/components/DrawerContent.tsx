@@ -2,7 +2,8 @@ import React from "react";
 import { Alert, StyleSheet, Modal } from "react-native";
 import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
 import { useTheme, Drawer, List, Divider } from "react-native-paper";
-
+import { openUrl } from "../utils";
+import { TERMS_AND_CONDITIONS_URL } from "../config";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import {
   Card,
@@ -100,7 +101,7 @@ const DrawerContent = (props: any) => {
             }
           />
           <Divider />
-          <DrawerItem
+          {/* <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
@@ -108,9 +109,9 @@ const DrawerContent = (props: any) => {
             onPress={() =>
               props.navigation.navigate("Home", { screen: "Standings" })
             }
-          />
-          <Divider />
-          <DrawerItem
+          /> */}
+          {/* <Divider /> */}
+          {/* <DrawerItem
             icon={({ color, size }) => (
               <SimpleLineIcons name="check" color={color} size={size} />
             )}
@@ -129,8 +130,8 @@ const DrawerContent = (props: any) => {
             onPress={() =>
               props.navigation.navigate("Home", { screen: "Players" })
             }
-          />
-          <Divider />
+          /> */}
+          {/* <Divider /> */}
           <List.Accordion
             title="Register"
             left={props => (
@@ -206,6 +207,16 @@ const DrawerContent = (props: any) => {
                 params: { screen: "OurSponsors" },
               })
             }
+          />
+           <DrawerItem
+            icon={({ color, size }) => (
+              <SimpleLineIcons name="check" color={color} size={size} />
+            )}
+            label="Terms and Conditions"
+            // onPress={() =>
+            //   props.navigation.navigate("Home", { screen: "Players" })
+            // }
+            onPress={() => openUrl(TERMS_AND_CONDITIONS_URL)}
           />
           <Divider />
           <DrawerItem

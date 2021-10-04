@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert, ScrollView, StyleSheet } from "react-native";
-import { useTheme, List, Avatar, Divider } from "react-native-paper";
+import { Button, Portal, Dialog, useTheme, List, Avatar, Divider, HelperText } from "react-native-paper";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import AntDesignIcon from "react-native-vector-icons/AntDesign";
 
@@ -24,25 +24,49 @@ const SettingsMenu = ({ navigation }: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const user: User = useAppSelector(getCurrentUser)!;
-
+  const [visible, setVisible] = React.useState(false);
   const navigateToScreen = (screen: keyof StackParamList) => {
     navigation.navigate(screen);
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        {
-          text: "Logout",
-          onPress: () => dispatch(logoutUser()),
-        },
-        { text: "Cancel" },
-      ],
-      { cancelable: false },
+    setVisible(true);
+    // Alert.alert(
+    //   "Logout",
+    //   "Are you sure you want to logout?",
+    //   [
+    //     {
+    //       text: "Logout",
+    //       onPress: () => dispatch(logoutUser()),
+    //     },
+    //     { text: "Cancel" },
+    //   ],
+    //   { cancelable: false },
+    // );
+  };
+
+   const renderInputModal = () => {
+    return (
+      <Portal>
+        <Dialog visible={visible}>
+          <Dialog.Title> Logout</Dialog.Title>
+          <Dialog.Content>
+            <HelperText type="info" style={{ paddingHorizontal: 0 }}>
+              Are you sure you want to logout?
+            </HelperText>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => dispatch(logoutUser())}>Logout</Button>
+          </Dialog.Actions>
+          <Dialog.Actions>
+            <Button onPress={() => setVisible(false)}>Cancel</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     );
   };
+
+
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -129,6 +153,7 @@ const SettingsMenu = ({ navigation }: Props) => {
           <Divider style={styles.divider} />
         </List.Section>
       </Block>
+      {renderInputModal()}
     </ScrollView>
   );
 };
