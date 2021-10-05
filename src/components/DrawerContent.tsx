@@ -147,12 +147,9 @@ const DrawerContent = (props: any) => {
               title="Create a Team"
               titleStyle={{ fontSize: 14 }}
               onPress={() =>
-                props.navigation.navigate("Home", {
-                  screen: "Home",
-                  params: {
-                    screen: "CreateTeam",
-                  },
-                })
+                props.navigation.navigate(
+                 "CreateTeam"
+                )
               }
             />
             <Divider />
@@ -160,12 +157,9 @@ const DrawerContent = (props: any) => {
               title="Join as subsitute"
               titleStyle={{ fontSize: 14 }}
               onPress={() =>
-                props.navigation.navigate("Home", {
-                  screen: "Home",
-                  params: {
-                    screen: "JoinAsSubstitute",
-                  },
-                })
+                props.navigation.navigate(
+                  "JoinAsSubstitute"
+                )
               }
             />
             <Divider />
@@ -173,12 +167,9 @@ const DrawerContent = (props: any) => {
               title="Recruiting Teams"
               titleStyle={{ fontSize: 14 }}
               onPress={() =>
-                props.navigation.navigate("Home", {
-                  screen: "Home",
-                  params: {
-                    screen: "RecruitingTeams",
-                  },
-                })
+                props.navigation.navigate(
+                  "RecruitingTeams"
+                )
               }
             />
           </List.Accordion>
@@ -189,10 +180,8 @@ const DrawerContent = (props: any) => {
             )}
             label="FAQs"
             onPress={() =>
-              props.navigation.navigate("Home", {
-                screen: "Home",
-                params: { screen: "FAQs" },
-              })
+              props.navigation.navigate( "FAQs" 
+              )
             }
           />
           <Divider />
@@ -202,10 +191,9 @@ const DrawerContent = (props: any) => {
             )}
             label="Our Sponsors"
             onPress={() =>
-              props.navigation.navigate("Home", {
-                screen: "Home",
-                params: { screen: "OurSponsors" },
-              })
+              props.navigation.navigate(
+                 "OurSponsors" 
+              )
             }
           />
            <DrawerItem

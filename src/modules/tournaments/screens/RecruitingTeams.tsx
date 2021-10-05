@@ -133,8 +133,8 @@ const RecruitingTeams = ({ navigation }: Props) => {
                         subtitle
                         size={13}
                         style={{
-                          flex: 1,
-                          flexWrap: "wrap",
+                          // flex: 1,
+                          // flexWrap: "wrap",
                           width:"80%"              //nfc
                         }}>
                         {standing.name}
