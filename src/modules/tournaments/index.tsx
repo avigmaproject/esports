@@ -65,27 +65,25 @@ const MatchesStackNavigator = () => {
   );
 };
 
-const TeamRegisterStackNavigator = () => {
-  const { Navigator, Screen } = TeamRegisterStack;
-  return (
-    <Navigator
-      screenOptions={{
-        header: props => <Header {...props} />,
-      }}>
-      <Screen
-        name="CreateTeam"
-        component={CreateTeam}
-        options={{ title: "Create a Team" }}
-      />
-      <Screen name="JoinAsSubstitute" component={JoinAsSubstitute} />
-      <Screen
-        name="RecruitingTeams"
-        component={RecruitingTeams}
-        initialParams={{ recruitingTeams: true }}
-      />
-    </Navigator>
-  );
-};
+// const TeamRegisterStackNavigator = () => {
+//   const { Navigator, Screen } = TeamRegisterStack;
+//   return (
+//     <Navigator
+//       >
+//       <Screen
+//         name="CreateTeam"
+//         component={CreateTeam}
+//         options={{ title: "Create a Team" }}
+//       />
+//       <Screen name="JoinAsSubstitute" component={JoinAsSubstitute} />
+//       <Screen
+//         name="RecruitingTeams"
+//         component={RecruitingTeams}
+//         initialParams={{ recruitingTeams: true }}
+//       />
+//     </Navigator>
+//   );
+// };
 
 const HomeStackNavigator = () => {
   const { Navigator, Screen } = HomeStack;
@@ -144,7 +142,7 @@ export {
   PlayersStackNavigator,
   StandingsStackNavigator,
   MatchesStackNavigator,
-  TeamRegisterStackNavigator,
+  // TeamRegisterStackNavigator,
   HomeStackNavigator,
   SelectLeagueNavigator,
 };
