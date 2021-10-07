@@ -6,6 +6,8 @@ import {
   StyleSheet,
   Alert,
   RefreshControl,
+  TouchableOpacity,
+  Platform
 } from "react-native";
 import { useFocusEffect, useIsFocused } from "@react-navigation/core";
 import {
@@ -329,6 +331,7 @@ const Standings = ({ navigation }: Props) => {
   return (
     <React.Fragment>
       <SafeAreaView style={{ flex: 1 }}>
+
         <DataTable
           style={{
             marginBottom: 50,
@@ -490,15 +493,26 @@ const Standings = ({ navigation }: Props) => {
             <FAB
               style={{
                 position: "absolute",
-                margin: 16,
+                margin: 15,
                 right: 0,
-                bottom: 75,
+                top: 35,
               }}
+              small
               icon="filter"
+              // label="filter"
               onPress={showDialog}
               visible={isFocused}
             />
-          </Portal>
+          {/* <TouchableOpacity
+            visible={isFocused}
+            onPress={showDialog}
+            style ={{marginTop:Platform.OS === "ios" ? "17%" : "5%",
+                    right:20,
+                    position:'absolute'
+                  }}>
+          <Text style ={{fontWeight:'700'}}>Filter</Text>
+        </TouchableOpacity> */}
+      </Portal>
         )}
       </SafeAreaView>
     </React.Fragment>
