@@ -1,7 +1,7 @@
 import { useFocusEffect, useIsFocused } from "@react-navigation/core";
 import React, { useCallback, useState } from "react";
 
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { Tabs, TabScreen } from "react-native-paper-tabs";
 import {
   Dialog,
@@ -233,6 +233,19 @@ const Matches = ({ navigation }: Props) => {
                 : pastMatches.length > 0 && isFocused
             }
           />
+              {/* <TouchableOpacity
+          visible={
+              tabIndex === 0
+                ? upcomingMatches.length > 0 && isFocused
+                : pastMatches.length > 0 && isFocused
+            }
+          onPress={showDialog}
+          style ={{ marginTop:Platform.OS === "ios" ? "17%" : "0%",
+                    right:20,
+                    position:'absolute'
+                  }}>
+        <Text style ={{fontWeight:'700'}}>Filter</Text>
+        </TouchableOpacity> */}
         </Portal>
       )}
     </React.Fragment>
