@@ -1,9 +1,28 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet
+} from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { Tabs, TabScreen } from "react-native-paper-tabs";
-import { useFocusEffect } from "@react-navigation/core";
-
-import { Block, Text } from "../../../components";
+import { useFocusEffect,useIsFocused } from "@react-navigation/core";
+import {
+  DataTable,
+  FAB,
+  Portal,
+  TouchableRipple,
+  useTheme,
+  Dialog,
+  Button,
+  RadioButton,
+  Divider,
+  List,
+  IconButton,
+  ActivityIndicator,
+  Modal,
+} from "react-native-paper";
+import { Block, Text, TextInput } from "../../../components";
 import {
   Players,
   Connoissueurs,
@@ -18,8 +37,11 @@ import {
   getPlayerScreenLoading,
   loadCastersByLeague,
   loadPlayersByLeague,
+  getLeagueSeasons
 } from "../store";
 import * as fromModels from "../models";
+import { theme as coreTheme, theme } from "../../../core/theme";
+import { FILTER_REGIONS } from "../../../config";
 
 type Props = {
   navigation: fromModels.PlayersStackNavigatorProp;
@@ -27,13 +49,63 @@ type Props = {
 
 const PlayersScreen = ({ navigation }: Props) => {
   const dispatch = useAppDispatch();
-  const activeLeague: fromModels.League = useAppSelector(getActiveLeague)!;
+  const activeLeague = useAppSelector(getActiveLeague)!;
+  const seasons = useAppSelector(getLeagueSeasons);
+  // const activeLeague: fromModels.League = useAppSelector(getActiveLeague)!;
   const teams = useAppSelector(getPlayers);
   // const casters = useAppSelector(getCasters);
+  const [tabIndex, setTabIndex] = useState<number>(0);
   const loading = useAppSelector(getPlayerScreenLoading);
-
+  const [selectedRegion, setSelectedRegion] = useState<string>("");
+  const [selectedSeason, setSelectedSeason] = useState<string>("");
+  const isFocused = useIsFocused();
+  const [regions, setRegions] = useState<{ code: string; title: string }[]>(
+    FILTER_REGIONS,
+  );
+  const [posMin, setPosMin] = useState<string>("");
+  const [visible, setVisible] = React.useState(false);
+  const [filterRegionRank, setFilterRegionRank] = useState<
+    | {
+        region: string;
+        posMin: string;
+        season: string;
+      }
+    | undefined
+  >(undefined);
   useFocusEffect(
     useCallback(() => {
+      let mounted = true;
+
+      if (mounted) {
+        let request: fromModels.League = {
+            league: activeLeague.key,
+        };
+        if (filterRegionRank) {
+          request = {
+            ...request,
+            region: filterRegionRank.region,
+            posMin: parseInt(filterRegionRank.posMin, 10),
+            season: filterRegionRank.season,
+          };
+
+          if (filterRegionRank.region) {
+            const rg = regions.find(
+              item => item.code === filterRegionRank.region,
+            );
+            navigation.setOptions({
+              headerTitle : rg?.title,
+            });
+          } else {
+            navigation.setOptions({
+              headerTitle: "Worldwide",
+            });
+          }
+        } else {
+          navigation.setOptions({
+            headerTitle: "Worldwide",
+          })
+        }
+      }
       if (teams.length === 0) {
         dispatch(loadPlayersByLeague(activeLeague.key));
       }
@@ -41,8 +113,10 @@ const PlayersScreen = ({ navigation }: Props) => {
       //   dispatch(loadCastersByLeague(activeLeague.key));
       // }
 
-      return () => {};
-    }, [activeLeague]),
+      return () => {
+        mounted = false;
+      };
+    }, [activeLeague,filterRegionRank]),
   );
 
   const redirectToPlayerDetails = (player: fromModels.Player) => {
@@ -60,8 +134,102 @@ const PlayersScreen = ({ navigation }: Props) => {
     dispatch(loadCastersByLeague(activeLeague.key));
   };
 
+  const showDialog = () => {
+    if (filterRegionRank) {
+      setSelectedRegion(filterRegionRank.region);
+      // setRankMin(filterRegionRank.rankMin);
+      setSelectedSeason(filterRegionRank.season);
+    }
+    setVisible(true);
+  };
+  const hideDialog = () => {
+    setVisible(false);
+  };
+
+  const handleRegionFilterModal = () => {
+    setFilterRegionRank({
+      region: selectedRegion,
+      posMin: posMin,
+    });
+    hideDialog();
+  };
+
+  const renderFilterModal = () => {
+    return (
+      <Portal>
+        <Dialog visible={visible} onDismiss={hideDialog}>
+          <Dialog.Title>Filter</Dialog.Title>
+          <Divider />
+          <Dialog.ScrollArea 
+            style={{ 
+              paddingHorizontal: 0,
+               maxHeight: 400, 
+            }}>
+            <ScrollView>
+             <List.Section>
+                <List.Subheader>Season</List.Subheader>
+                <RadioButton.Group
+                  onValueChange={newValue => setSelectedSeason(newValue)}
+                  value={selectedSeason}>
+                  {seasons.map(season => (
+                    <RadioButton.Item
+                      label={season.name}
+                      value={season.id}
+                      key={`region-${season.id}`}
+                      style={{
+                        paddingVertical: 2,
+                      }}
+                    />
+                  ))}
+                </RadioButton.Group>
+              </List.Section>
+            <List.Section>
+              <List.Subheader>Region</List.Subheader>
+              <RadioButton.Group
+                onValueChange={newValue => setSelectedRegion(newValue)}
+                value={selectedRegion}>
+                {regions.map(region => (
+                  <RadioButton.Item
+                    label={region.title}
+                    value={region.code}
+                    key={`region-${region.code}`}
+                  />
+                ))}
+              </RadioButton.Group>
+            </List.Section>
+            <Divider />
+              <List.Section>
+                <List.Subheader>Min Rank</List.Subheader>
+                  {/* {tabIndex === 1 && ( */}
+              <Block noflex paddingHorizontal={20}>
+                <TextInput
+                  placeholder="Minimum Rank"
+                  value={posMin}
+                  onChangeText={text => setPosMin(text)}
+                  inputStyle={styles.textInput}
+                  placeholderTextColor="#adadad"
+                  containerStyle={styles.textInputContainer}
+                  // keyboardType="numeric"
+                />
+              </Block>
+            {/* )} */}
+              </List.Section>
+          
+          </ScrollView>
+          </Dialog.ScrollArea>
+          <Divider />
+          <Dialog.Actions>
+            <Button onPress={hideDialog}>Cancel</Button>
+            <Button onPress={handleRegionFilterModal}>Submit</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    );
+  };
+
   return (
-    <Tabs>
+    <React.Fragment>
+      <Tabs>
       <TabScreen label={"Players"}>
         <Players
           teams={teams}
@@ -86,7 +254,42 @@ const PlayersScreen = ({ navigation }: Props) => {
         <Connoissueurs />
       </TabScreen> */}
     </Tabs>
+    {renderFilterModal()}
+    {!visible && (
+      <Portal>
+        <FAB
+           style={{
+             position: "absolute",
+             margin: 16,
+            right: 0,
+            bottom: 75,
+              }}             
+          icon="filter"
+          visible={isFocused}
+          onPress={showDialog}
+          visible={isFocused}
+        />
+      </Portal> 
+    )}
+  </React.Fragment>
   );
 };
 
 export default PlayersScreen;
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
+  header: { height: 50, backgroundColor: "#537791" },
+  text: { textAlign: "center", fontWeight: "100" },
+  dataWrapper: { marginTop: -1 },
+  row: { flexDirection: "row", backgroundColor: "#FFF1C1" },
+  textInput: {
+    zIndex: 100,
+    backgroundColor: coreTheme.colors.background,
+    paddingLeft: 10,
+  },
+  textInputContainer: {
+    marginVertical: 0,
+    marginBottom: 10,
+  },
+});

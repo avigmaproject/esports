@@ -43,14 +43,16 @@ const SelectLeague = ({ navigation, route }: Props) => {
     }, []),
   );
 
-  const handleSelectLeague = (item) => {
+  const handleSelectLeague = (item) => { 
     setSelectedLeague(item);
-    console.log("selectedLeague", selectedLeague);
+    console.log(item,"itemmmm");
     
+    console.log("selectedLeague", selectedLeague);
+  
 
     if (selectedLeague) {
+      
       console.log("selectedLeaguetitle", selectedLeague.title);
-
       // toaster.show({
       //   message: `${selectedLeague.title} selected.`,
       //   type: "info",
@@ -63,13 +65,15 @@ const SelectLeague = ({ navigation, route }: Props) => {
     // else {
     //   Alert.alert("Warning", "Please select a league");
     // }
+
   };
+  
 
   const renderItem = ({ item }: { item: League }) => {
     return (
       <Block flex>
         <TouchableRipple
-          onPress={() => handleSelectLeague(item)}
+          onPress={() =>  handleSelectLeague(item)}
           // onPress={() => setSelectedLeague(item)}
           style={[
             styles.item,

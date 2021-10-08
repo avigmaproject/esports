@@ -493,13 +493,11 @@ const Standings = ({ navigation }: Props) => {
             <FAB
               style={{
                 position: "absolute",
-                margin: 15,
+                margin: 16,
                 right: 0,
-                top: 35,
+                bottom: 75,
               }}
-              small
               icon="filter"
-              // label="filter"
               onPress={showDialog}
               visible={isFocused}
             />

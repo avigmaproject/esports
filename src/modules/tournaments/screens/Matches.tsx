@@ -1,7 +1,7 @@
 import { useFocusEffect, useIsFocused } from "@react-navigation/core";
 import React, { useCallback, useState } from "react";
 
-import { StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { StyleSheet,ScrollView } from "react-native";
 import { Tabs, TabScreen } from "react-native-paper-tabs";
 import {
   Dialog,
@@ -25,6 +25,7 @@ import {
   loadLeagueUpcomingMatches,
   submitVoteForCast,
   submitVoteForTeam,
+  getLeagueSeasons,
 } from "../store";
 import * as fromModels from "../models";
 import { theme as coreTheme } from "../../../core/theme";
@@ -39,6 +40,7 @@ const Matches = ({ navigation }: Props) => {
   const isFocused = useIsFocused();
   const upcomingMatches = useAppSelector(getLeagueUpcomingMatches);
   const pastMatches = useAppSelector(getLeagueMatchesHistory);
+  const seasons = useAppSelector(getLeagueSeasons);
   const activeLeague = useAppSelector(getActiveLeague)!;
   const scheduledTitle =
     upcomingMatches.length > 0
@@ -46,6 +48,7 @@ const Matches = ({ navigation }: Props) => {
       : `Scheduled`;
 
   const [tabIndex, setTabIndex] = useState<number>(0);
+  const [selectedSeason, setSelectedSeason] = useState<string>("");
   const [selectedRegion, setSelectedRegion] = useState<string>("");
   const [regions, setRegions] = useState<{ code: string; title: string }[]>(
     FILTER_REGIONS,
@@ -121,6 +124,11 @@ const Matches = ({ navigation }: Props) => {
   };
 
   const showDialog = () => {
+    if (filterRegionRank) {
+      setSelectedRegion(filterRegionRank.region);
+      // setRankMin(filterRegionRank.rankMin);
+      setSelectedSeason(filterRegionRank.season);
+    }
     setVisible(true);
   };
   const hideDialog = () => {
@@ -152,7 +160,29 @@ const Matches = ({ navigation }: Props) => {
         <Dialog visible={visible} onDismiss={hideDialog}>
           <Dialog.Title>Filter</Dialog.Title>
           <Divider />
-          <Dialog.Content style={{ paddingHorizontal: 0 }}>
+          <Dialog.ScrollArea 
+            style={{ 
+              paddingHorizontal: 0,
+               maxHeight: 400, 
+            }}>
+            <ScrollView>
+             <List.Section>
+                <List.Subheader>Season</List.Subheader>
+                <RadioButton.Group
+                  onValueChange={newValue => setSelectedSeason(newValue)}
+                  value={selectedSeason}>
+                  {seasons.map(season => (
+                    <RadioButton.Item
+                      label={season.name}
+                      value={season.id}
+                      key={`region-${season.id}`}
+                      style={{
+                        paddingVertical: 2,
+                      }}
+                    />
+                  ))}
+                </RadioButton.Group>
+              </List.Section>
             <List.Section>
               <List.Subheader>Region</List.Subheader>
               <RadioButton.Group
@@ -167,7 +197,10 @@ const Matches = ({ navigation }: Props) => {
                 ))}
               </RadioButton.Group>
             </List.Section>
-            {tabIndex === 1 && (
+            <Divider />
+              <List.Section>
+                <List.Subheader>Min Rank</List.Subheader>
+                  {/* {tabIndex === 1 && ( */}
               <Block noflex paddingHorizontal={20}>
                 <TextInput
                   placeholder="Minimum Rank"
@@ -179,8 +212,11 @@ const Matches = ({ navigation }: Props) => {
                   // keyboardType="numeric"
                 />
               </Block>
-            )}
-          </Dialog.Content>
+            {/* )} */}
+              </List.Section>
+          
+          </ScrollView>
+          </Dialog.ScrollArea>
           <Divider />
           <Dialog.Actions>
             <Button onPress={hideDialog}>Cancel</Button>
