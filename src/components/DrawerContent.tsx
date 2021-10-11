@@ -72,12 +72,13 @@ const DrawerContent = (props: any) => {
         <Drawer.Section style={styles.drawerSection}>
           <Divider />
           <DrawerItem
-            icon={({ color, size }) => (
-              <SimpleLineIcons name="check" color={color} size={size} />
-            )}
+            // icon={({ color, size }) => (
+            //   <SimpleLineIcons name="check" color={color} size={size} />
+            // )}
             label={
               activeLeague ? `${activeLeague.title} Master League` : "Select League"
             }
+            labelStyle={{textAlign:'center',fontSize:18}}
             // onPress={() =>
             //   props.navigation.navigate("Home", {
             //     screen: "Home",

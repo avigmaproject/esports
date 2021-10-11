@@ -139,6 +139,8 @@ const Matches = ({ navigation }: Props) => {
     setFilterRegionRank({
       region: selectedRegion,
       posMin: posMin,
+      season: selectedSeason,
+      
     });
     hideDialog();
   };
@@ -220,7 +222,7 @@ const Matches = ({ navigation }: Props) => {
           <Divider />
           <Dialog.Actions>
             <Button onPress={hideDialog}>Cancel</Button>
-            <Button onPress={handleRegionFilterModal}>Submit</Button>
+            <Button onPress={handleRegionFilterModal}>Filter</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
