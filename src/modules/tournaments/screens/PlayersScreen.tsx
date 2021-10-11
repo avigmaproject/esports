@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -37,7 +37,8 @@ import {
   getPlayerScreenLoading,
   loadCastersByLeague,
   loadPlayersByLeague,
-  getLeagueSeasons
+  getLeagueSeasons,
+  getLeagueRegionsWithCode
 } from "../store";
 import * as fromModels from "../models";
 import { theme as coreTheme, theme } from "../../../core/theme";
@@ -51,6 +52,7 @@ const PlayersScreen = ({ navigation }: Props) => {
   const dispatch = useAppDispatch();
   const activeLeague = useAppSelector(getActiveLeague)!;
   const seasons = useAppSelector(getLeagueSeasons);
+  const regions = useAppSelector(getLeagueRegionsWithCode);
   // const activeLeague: fromModels.League = useAppSelector(getActiveLeague)!;
   const teams = useAppSelector(getPlayers);
   // const casters = useAppSelector(getCasters);
@@ -59,32 +61,49 @@ const PlayersScreen = ({ navigation }: Props) => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
   const [selectedSeason, setSelectedSeason] = useState<string>("");
   const isFocused = useIsFocused();
-  const [regions, setRegions] = useState<{ code: string; title: string }[]>(
-    FILTER_REGIONS,
+  // const [regions, setRegions] = useState<{ code: string; title: string }[]>(
+  //   FILTER_REGIONS,
+  // );
+  const [paginateRankMax, setPaginateRankMax] = useState<number | undefined>(
+   undefined,
   );
   const [posMin, setPosMin] = useState<string>("");
+  const [rankMin, setRankMin] = useState<string>("");
   const [visible, setVisible] = React.useState(false);
   const [filterRegionRank, setFilterRegionRank] = useState<
     | {
         region: string;
-        posMin: string;
+        rankMin: string;
         season: string;
       }
     | undefined
   >(undefined);
+
+  const showDialog = () => {
+    if (filterRegionRank) {
+      setSelectedRegion(filterRegionRank.region);
+      setRankMin(filterRegionRank.rankMin);
+      setSelectedSeason(filterRegionRank.season);
+    }
+    setVisible(true);
+  };
+  const hideDialog = () => {
+    setVisible(false);
+  };
+
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
 
       if (mounted) {
-        let request: fromModels.League = {
+        let request: fromModels.StandingRequest = {
             league: activeLeague.key,
         };
         if (filterRegionRank) {
           request = {
             ...request,
             region: filterRegionRank.region,
-            posMin: parseInt(filterRegionRank.posMin, 10),
+            rankMin: parseInt(filterRegionRank.rankMin, 10),
             season: filterRegionRank.season,
           };
 
@@ -93,21 +112,17 @@ const PlayersScreen = ({ navigation }: Props) => {
               item => item.code === filterRegionRank.region,
             );
             navigation.setOptions({
-              headerTitle : rg?.title,
+              headerTitle : rg?.name,
             });
           } else {
             navigation.setOptions({
               headerTitle: "Worldwide",
             });
           }
-        } else {
-          navigation.setOptions({
-            headerTitle: "Worldwide",
-          })
-        }
+        } 
       }
       if (teams.length === 0) {
-        dispatch(loadPlayersByLeague(activeLeague.key));
+        dispatch(loadPlayersByLeague(request));        
       }
       // if (casters.length === 0) {
       //   dispatch(loadCastersByLeague(activeLeague.key));
@@ -116,8 +131,27 @@ const PlayersScreen = ({ navigation }: Props) => {
       return () => {
         mounted = false;
       };
-    }, [activeLeague,filterRegionRank]),
+    }, [activeLeague.key,filterRegionRank]),
   );
+
+  useEffect(() => {
+    let mounted = true;
+    if (mounted) {
+      if (paginateRankMax) {
+        const request: fromModels.StandingRequest = {
+          league: activeLeague.key,
+          rankMin: paginateRankMax,
+        };
+        const resultAction = dispatch(loadPlayersByLeague(request));
+        resultAction.then(() => {
+          ref.current?.scrollTo({ x: 0, y: 0, animated: true });
+        });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [paginateRankMax]);
 
   const redirectToPlayerDetails = (player: fromModels.Player) => {
     navigation.navigate("PlayerDetails", {
@@ -134,22 +168,12 @@ const PlayersScreen = ({ navigation }: Props) => {
     dispatch(loadCastersByLeague(activeLeague.key));
   };
 
-  const showDialog = () => {
-    if (filterRegionRank) {
-      setSelectedRegion(filterRegionRank.region);
-      // setRankMin(filterRegionRank.rankMin);
-      setSelectedSeason(filterRegionRank.season);
-    }
-    setVisible(true);
-  };
-  const hideDialog = () => {
-    setVisible(false);
-  };
+
 
   const handleRegionFilterModal = () => {
     setFilterRegionRank({
       region: selectedRegion,
-      posMin: posMin,
+      rankMin: rankMin,
     });
     hideDialog();
   };
@@ -166,7 +190,7 @@ const PlayersScreen = ({ navigation }: Props) => {
                maxHeight: 400, 
             }}>
             <ScrollView>
-             <List.Section>
+             {/* <List.Section>
                 <List.Subheader>Season</List.Subheader>
                 <RadioButton.Group
                   onValueChange={newValue => setSelectedSeason(newValue)}
@@ -182,7 +206,7 @@ const PlayersScreen = ({ navigation }: Props) => {
                     />
                   ))}
                 </RadioButton.Group>
-              </List.Section>
+              </List.Section> */}
             <List.Section>
               <List.Subheader>Region</List.Subheader>
               <RadioButton.Group
@@ -190,7 +214,7 @@ const PlayersScreen = ({ navigation }: Props) => {
                 value={selectedRegion}>
                 {regions.map(region => (
                   <RadioButton.Item
-                    label={region.title}
+                    label={region.name}
                     value={region.code}
                     key={`region-${region.code}`}
                   />
@@ -204,8 +228,8 @@ const PlayersScreen = ({ navigation }: Props) => {
               <Block noflex paddingHorizontal={20}>
                 <TextInput
                   placeholder="Minimum Rank"
-                  value={posMin}
-                  onChangeText={text => setPosMin(text)}
+                  value={rankMin}
+                  onChangeText={text => setRankMin(text)}
                   inputStyle={styles.textInput}
                   placeholderTextColor="#adadad"
                   containerStyle={styles.textInputContainer}
@@ -229,7 +253,12 @@ const PlayersScreen = ({ navigation }: Props) => {
 
   return (
     <React.Fragment>
-      <Tabs>
+      <Block noflex paddingHorizontal={0} style={{top:-11}}>
+      <TextInput placeholder="Search for a Player" onChangeText={console.log(teams[0].players[0].name,"teamsteams")}
+        />
+      <Icon name="search" size={25} color="#ffffff" style= {{position:"absolute", right:10, top:20}}/>
+      </Block>
+      <Tabs style={{top:-18}}>
       <TabScreen label={"Players"}>
         <Players
           teams={teams}
@@ -254,6 +283,7 @@ const PlayersScreen = ({ navigation }: Props) => {
         <Connoissueurs />
       </TabScreen> */}
     </Tabs>
+     
     {renderFilterModal()}
     {!visible && (
       <Portal>
