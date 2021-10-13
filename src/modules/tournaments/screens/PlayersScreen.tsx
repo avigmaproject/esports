@@ -52,7 +52,7 @@ const PlayersScreen = ({ navigation }: Props) => {
   const dispatch = useAppDispatch();
   const activeLeague = useAppSelector(getActiveLeague)!;
   const seasons = useAppSelector(getLeagueSeasons);
-  const regions = useAppSelector(getLeagueRegionsWithCode);
+  // const regions = useAppSelector(getLeagueRegionsWithCode);
   // const activeLeague: fromModels.League = useAppSelector(getActiveLeague)!;
   const teams = useAppSelector(getPlayers);
   // const casters = useAppSelector(getCasters);
@@ -61,9 +61,9 @@ const PlayersScreen = ({ navigation }: Props) => {
   const [selectedRegion, setSelectedRegion] = useState<string>("");
   const [selectedSeason, setSelectedSeason] = useState<string>("");
   const isFocused = useIsFocused();
-  // const [regions, setRegions] = useState<{ code: string; title: string }[]>(
-  //   FILTER_REGIONS,
-  // );
+  const [regions, setRegions] = useState<{ code: string; title: string }[]>(
+    FILTER_REGIONS,
+  );
   const [paginateRankMax, setPaginateRankMax] = useState<number | undefined>(
    undefined,
   );
@@ -120,9 +120,9 @@ const PlayersScreen = ({ navigation }: Props) => {
             });
           }
         } 
+         if (teams.length === 0) {
+        dispatch(loadPlayersByLeague(activeLeague.key));        
       }
-      if (teams.length === 0) {
-        dispatch(loadPlayersByLeague(request));        
       }
       // if (casters.length === 0) {
       //   dispatch(loadCastersByLeague(activeLeague.key));
@@ -131,27 +131,27 @@ const PlayersScreen = ({ navigation }: Props) => {
       return () => {
         mounted = false;
       };
-    }, [activeLeague.key,filterRegionRank]),
+    }, [activeLeague,filterRegionRank]),
   );
 
-  useEffect(() => {
-    let mounted = true;
-    if (mounted) {
-      if (paginateRankMax) {
-        const request: fromModels.StandingRequest = {
-          league: activeLeague.key,
-          rankMin: paginateRankMax,
-        };
-        const resultAction = dispatch(loadPlayersByLeague(request));
-        resultAction.then(() => {
-          ref.current?.scrollTo({ x: 0, y: 0, animated: true });
-        });
-      }
-    }
-    return () => {
-      mounted = false;
-    };
-  }, [paginateRankMax]);
+  // useEffect(() => {
+  //   let mounted = true;
+  //   if (mounted) {
+  //     if (paginateRankMax) {
+  //       const request: fromModels.StandingRequest = {
+  //         league: activeLeague.key,
+  //         rankMin: paginateRankMax,
+  //       };
+  //       const resultAction = dispatch(loadPlayersByLeague(request));
+  //       resultAction.then(() => {
+  //         ref.current?.scrollTo({ x: 0, y: 0, animated: true });
+  //       });
+  //     }
+  //   }
+  //   return () => {
+  //     mounted = false;
+  //   };
+  // }, [paginateRankMax]);
 
   const redirectToPlayerDetails = (player: fromModels.Player) => {
     navigation.navigate("PlayerDetails", {
@@ -253,12 +253,12 @@ const PlayersScreen = ({ navigation }: Props) => {
 
   return (
     <React.Fragment>
-      <Block noflex paddingHorizontal={0} style={{top:-11}}>
+      {/* <Block noflex paddingHorizontal={0} style={{top:-11}}>
       <TextInput placeholder="Search for a Player" onChangeText={console.log(teams[0].players[0].name,"teamsteams")}
         />
       <Icon name="search" size={25} color="#ffffff" style= {{position:"absolute", right:10, top:20}}/>
-      </Block>
-      <Tabs style={{top:-18}}>
+      </Block> */}
+      <Tabs>
       <TabScreen label={"Players"}>
         <Players
           teams={teams}
@@ -284,7 +284,7 @@ const PlayersScreen = ({ navigation }: Props) => {
       </TabScreen> */}
     </Tabs>
      
-    {renderFilterModal()}
+    {/* {renderFilterModal()}
     {!visible && (
       <Portal>
         <FAB
@@ -300,7 +300,7 @@ const PlayersScreen = ({ navigation }: Props) => {
           visible={isFocused}
         />
       </Portal> 
-    )}
+    )} */}
   </React.Fragment>
   );
 };

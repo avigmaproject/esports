@@ -39,42 +39,54 @@ const SelectLeague = ({ navigation, route }: Props) => {
 
   useFocusEffect(
     useCallback(() => {
-      return () => {};
-    }, []),
+      let mounted = true;
+      
+      if(mounted){
+          if (selectedLeague) {
+             console.log("selectedLeaguetitle", selectedLeague.title);
+            if (params && params.afterLogin) {
+            navigation.goBack();
+            }
+          }
+          dispatch(setActiveLeague(selectedLeague)); 
+        }
+      return () => {
+        mounted = false;
+      };
+    }, [selectedLeague]),
   );
 
-  const handleSelectLeague = (item) => { 
-    setSelectedLeague(item);
-    console.log(item,"itemmmm");
+  // const handleSelectLeague = (item) => { 
+  //   // setSelectedLeague(item);
+  //   console.log(item,"itemmmm");
     
-    console.log("selectedLeague", selectedLeague);
+  //   console.log("selectedLeague", selectedLeague);
   
 
-    if (selectedLeague) {
+  //   if (selectedLeague) {
       
-      console.log("selectedLeaguetitle", selectedLeague.title);
-      // toaster.show({
-      //   message: `${selectedLeague.title} selected.`,
-      //   type: "info",
-      // });
-      dispatch(setActiveLeague(selectedLeague));
-      if (params && params.afterLogin) {
-        navigation.goBack();
-      }
-    } 
-    // else {
-    //   Alert.alert("Warning", "Please select a league");
-    // }
+  //     console.log("selectedLeaguetitle", selectedLeague.title);
+  //     // toaster.show({
+  //     //   message: `${selectedLeague.title} selected.`,
+  //     //   type: "info",
+  //     // });
+  //     // dispatch(setActiveLeague(selectedLeague));
+  //     if (params && params.afterLogin) {
+  //       navigation.goBack();
+  //     }
+  //   } 
+  //   // else {
+  //   //   Alert.alert("Warning", "Please select a league");
+  //   // }
 
-  };
-  
+  // };
 
   const renderItem = ({ item }: { item: League }) => {
     return (
       <Block flex>
         <TouchableRipple
-          onPress={() =>  handleSelectLeague(item)}
-          // onPress={() => setSelectedLeague(item)}
+          onPress={() =>  setSelectedLeague(item)}
+          // onPress={() =>success(item) }
           style={[
             styles.item,
             selectedLeague && selectedLeague.key === item.key
